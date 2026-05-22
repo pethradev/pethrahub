@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Espaço</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* --- Variáveis de Tema --- */
+        :root[data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #e6f0fa 0%, #d5e3f5 100%);
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --card-border: rgba(255, 255, 255, 0.5);
+            --text-main: #1a1f36;
+            --text-muted: #6b7280;
+            --accent: #2b70ff;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            --modal-bg: #ffffff;
+            --hover-bg: rgba(0, 0, 0, 0.05);
+            --sidebar-handle: var(--accent);
+            --icon-bg: transparent;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --modal-bg: #1e293b;
+            --hover-bg: rgba(255, 255, 255, 0.1);
+            --sidebar-handle: #334155;
+            --icon-bg: transparent;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            transition: background 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Botão Tema */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            color: var(--text-main);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+
+        /* Glassmorphism Cards */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 350px 400px;
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .left-col, .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+        /* --- Módulo: Saudação e Relógio --- */
+        .greeting h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; }
+        .greeting .time { font-size: 3.5rem; font-weight: 700; color: var(--accent); cursor: pointer; letter-spacing: -2px; }
+        .greeting p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* --- Módulo: Clima --- */
+        .weather-module { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .weather-info h3 { font-size: 2.2rem; font-weight: 700; }
+        .weather-info p { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+        .weather-desc-text { font-size: 0.85rem; margin-top: 6px; color: var(--accent); font-weight: 600; }
+        .weather-details { display: flex; gap: 12px; font-size: 0.75rem; margin-top: 6px; color: var(--text-muted); font-weight: 500;}
+        .weather-icon { font-size: 2.8rem; }
+
+        /* --- Módulo: Pomodoro --- */
+        .pomodoro-module { text-align: center; }
+        .pomodoro-time { font-size: 4rem; font-weight: 700; letter-spacing: 2px; margin: 10px 0; color: var(--text-main); }
+        .pomodoro-controls { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .pomodoro-btn {
+            background: var(--accent); color: white; border: none; border-radius: 12px;
+            width: 50px; height: 50px; font-size: 1.2rem; cursor: pointer; transition: 0.2s;
+        }
+        .pomodoro-btn:hover { transform: scale(1.05); opacity: 0.9; }
+        .pomodoro-settings { font-size: 0.85rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
+
+        /* --- Módulo: Post-it --- */
+        .postit-module {
+            background: #fdf5c9;
+            transition: background 0.3s;
+            display: flex; flex-direction: column;
+            color: #1a1f36; 
+            min-height: 250px;
+        }
+        .postit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .postit-controls { display: flex; gap: 12px; align-items: center; color: #555; }
+        .postit-controls i { cursor: pointer; font-size: 1.1rem; transition: 0.2s; }
+        .postit-controls i:hover { color: var(--accent); transform: scale(1.1); }
+        .color-picker { display: flex; gap: 5px; }
+        .color-dot { width: 15px; height: 15px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); }
+        
+        .postit-body { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .postit-textarea {
+            flex: 1; width: 100%; min-height: 150px; background: transparent; border: none; outline: none;
+            font-family: inherit; font-size: 0.95rem; color: inherit; resize: none;
+        }
+        
+        /* Tasklist styles */
+        .tasklist-container { display: none; flex-direction: column; flex: 1; }
+        .task-ul { list-style: none; padding: 0; margin-bottom: 10px; }
+        .task-li { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .task-li input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+        .task-li input[type="text"] { 
+            flex: 1; background: transparent; border: none; outline: none; font-family: inherit; font-size: 0.95rem; color: inherit;
+        }
+        .task-li.completed input[type="text"] { text-decoration: line-through; opacity: 0.6; }
+        .task-add { 
+            background: rgba(0,0,0,0.05); border: none; outline: none; padding: 8px; border-radius: 6px; 
+            font-family: inherit; font-size: 0.9rem; width: 100%; color: inherit;
+        }
+        .task-add::placeholder { color: rgba(0,0,0,0.4); }
+
+        /* --- Módulo: Calendário --- */
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .calendar-header span { font-weight: 600; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: 0.2s; }
+        .calendar-header span:hover { background: var(--hover-bg); }
+        .calendar-header i { cursor: pointer; padding: 5px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 0.85rem; }
+        .calendar-day-name { color: var(--text-muted); font-weight: 600; margin-bottom: 5px; }
+        .calendar-day { padding: 8px; border-radius: 8px; cursor: pointer; position: relative; }
+        .calendar-day:hover { background: var(--hover-bg); }
+        .calendar-day.active { background: var(--accent); color: white; font-weight: bold; }
+        
+        /* Ponto indicador de evento */
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: #888;
+            border-radius: 50%;
+        }
+        .calendar-day.active.has-event::after {
+            background-color: #fff; /* Ponto branco se o dia estiver ativo (azul) */
+        }
+
+        /* --- Módulo: Versículo --- */
+        .verse-module { padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 550px; }
+        .verse-iframe { flex: 1; width: 100%; border: none; }
+
+        /* --- Menu Lateral Retrátil (Hub de Apps) - ESQUERDA --- */
+        .sidebar-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            display: flex;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+        }
+
+        .sidebar-trigger-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 100vh;
+            z-index: 99;
+        }
+
+        .sidebar-trigger-area:hover ~ .sidebar-wrapper,
+        .sidebar-wrapper:hover {
+            transform: translateX(0);
+        }
+
+        .hub-sidebar {
+            width: 340px;
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-right: 1px solid var(--card-border);
+            padding: 30px 20px;
+            overflow-y: auto;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-handle {
+            position: absolute;
+            right: -35px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 35px;
+            height: 100px;
+            background: var(--sidebar-handle);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            font-size: 1.2rem;
+        }
+
+        .hub-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; }
+        .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; }
+        .app-item, .folder {
+            display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; text-decoration: none; color: var(--text-main);
+        }
+        
+        .folder-icon-container {
+            width: 60px; height: 60px; background: var(--hover-bg); border-radius: 16px;
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; padding: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.2s; border: 1px solid var(--card-border);
+        }
+        .folder-icon-container:hover { transform: scale(1.05); background: rgba(128,128,128,0.2); }
+        .mini-icon { width: 100%; height: 100%; border-radius: 3px; background-size: contain; background-repeat: no-repeat; background-position: center; }
+        
+        .app-icon {
+            width: 60px; height: 60px; border-radius: 16px; background-size: contain; background-repeat: no-repeat; background-position: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.2s; background-color: var(--icon-bg); border: none;
+            padding: 8px; 
+        }
+        .app-icon:hover { transform: scale(1.05); }
+        .app-name { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px; }
+
+        /* --- Modais --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 200;
+        }
+        .modal { 
+            background: var(--modal-bg); color: var(--text-main); border-radius: 20px; 
+            padding: 25px; width: 450px; max-width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto;
+        }
+        .modal h3 { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-close { cursor: pointer; background: none; border: none; font-size: 1.5rem; color: var(--text-main); }
+        
+        .search-input { 
+            width: 100%; padding: 12px; border: 1px solid var(--card-border); border-radius: 8px; 
+            margin-bottom: 10px; font-family: inherit; background: var(--hover-bg); color: var(--text-main);
+        }
+        .search-results { max-height: 200px; overflow-y: auto; list-style: none; }
+        .search-results li { padding: 10px; border-bottom: 1px solid var(--card-border); cursor: pointer; }
+        .search-results li:hover { background: var(--hover-bg); }
+
+        .folder-modal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 20px; }
+
+        /* Modal Notas Salvas */
+        .saved-notes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .saved-note-card {
+            border-radius: 12px; padding: 15px; cursor: pointer; height: 100px; overflow: hidden;
+            color: #1a1f36; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.2s;
+        }
+        .saved-note-card:hover { transform: scale(1.05); }
+        .saved-note-card .note-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
+        .saved-note-card .note-preview { font-size: 0.75rem; opacity: 0.8; }
+        .saved-note-card .delete-btn { position: absolute; bottom: 8px; right: 8px; color: #ff4d4d; cursor: pointer; font-size: 0.9rem; }
+        
+        .action-btn { padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; font-family: inherit; width: 100%; transition: 0.2s; }
+        .action-btn:hover { opacity: 0.9; }
+        .action-btn.danger { background: #ff4d4d; margin-bottom: 15px; }
+
+        /* Botões da Grade do Calendário Modal */
+        .cal-grid-btn {
+            padding: 12px; border: none; border-radius: 8px; background: transparent; 
+            color: var(--text-main); cursor: pointer; font-weight: 500; font-size: 1rem; 
+            font-family: inherit; transition: 0.2s;
+        }
+        .cal-grid-btn:hover { background: var(--hover-bg); }
+        .cal-grid-btn.active { background: var(--accent) !important; color: white !important; }
+
+        /* Lista de Eventos (Calendário) */
+        .event-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--hover-bg); padding: 10px; border-radius: 8px; margin-bottom: 8px;
+        }
+        .event-item-info { display: flex; flex-direction: column; }
+        .event-item-time { font-size: 0.8rem; font-weight: 600; color: var(--accent); }
+        .event-item-title { font-size: 0.95rem; }
+        .event-actions i { cursor: pointer; margin-left: 10px; opacity: 0.7; transition: 0.2s; }
+        .event-actions i:hover { opacity: 1; }
+        .event-actions .fa-edit:hover { color: var(--accent); }
+        .event-actions .fa-trash:hover { color: #ff4d4d; }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- Botão de Alternar Tema (Direita) -->
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Alternar Modo Claro/Escuro">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Dashboard Principal -->
+    <div class="dashboard-grid">
+        <div class="left-col">
+            <div class="card greeting">
+                <h2>Olá, Pethra! </h2>
+                <div class="time" id="main-clock" onclick="openTimezoneModal()">00:00:00</div>
+                <p>Torne o dia hoje mais divertido que ontem. Deus te abençoe!</p>
+                <div id="extra-clocks" style="margin-top:10px; display:flex; gap:10px; font-size:0.8rem; color:var(--text-muted);"></div>
+            </div>
+
+            <div class="card weather-module" onclick="openWeatherModal()">
+                <div class="weather-info">
+                    <h3 id="temp">--°C</h3>
+                    <p id="city-name">A carregar local...</p>
+                    <div id="weather-desc" class="weather-desc-text">Carregando...</div>
+                    <div class="weather-details">
+                        <span id="weather-wind" title="Velocidade do vento"><i class="fas fa-wind"></i> -- km/h</span>
+                        <span id="weather-precip" title="Precipitação"><i class="fas fa-tint"></i> -- mm</span>
+                    </div>
+                </div>
+                <div class="weather-icon" id="weather-emoji">☁️</div>
+            </div>
+
+            <div class="card pomodoro-module">
+                <div class="pomodoro-time" id="pomo-display">25:00</div>
+                <div class="pomodoro-controls">
+                    <button class="pomodoro-btn" onclick="togglePomodoro()"><i class="fas fa-play" id="pomo-play-icon"></i></button>
+                    <button class="pomodoro-btn" onclick="resetPomodoro()"><i class="fas fa-redo"></i></button>
+                </div>
+                <div class="pomodoro-settings" onclick="openPomodoroModal()">Ajustar tempos</div>
+            </div>
+
+            <!-- Post-it Atualizado -->
+            <div class="card postit-module" id="postit-card">
+                <div class="postit-header">
+                    <div class="color-picker">
+                        <div class="color-dot" style="background:#fdf5c9" onclick="changePostitColor('#fdf5c9')"></div>
+                        <div class="color-dot" style="background:#c9fdf0" onclick="changePostitColor('#c9fdf0')"></div>
+                        <div class="color-dot" style="background:#f8c9fd" onclick="changePostitColor('#f8c9fd')"></div>
+                    </div>
+                    <div class="postit-controls">
+                        <i class="fas fa-list-check" title="Alternar Lista/Texto" onclick="togglePostitMode()"></i>
+                        <i class="fas fa-save" title="Salvar Nota" onclick="saveCurrentNote()"></i>
+                        <i class="fas fa-folder-open" title="Notas Salvas" onclick="openSavedNotesModal()"></i>
+                    </div>
+                </div>
+                <div class="postit-body">
+                    <!-- Modo Texto -->
+                    <textarea class="postit-textarea" id="postit-text" placeholder="Escreva uma anotação..."></textarea>
+                    
+                    <!-- Modo Lista de Tarefas -->
+                    <div class="tasklist-container" id="tasklist-container">
+                        <ul class="task-ul" id="task-ul"></ul>
+                        <input type="text" class="task-add" id="task-add-input" placeholder="+ Nova tarefa (Aperte Enter)" onkeypress="handleTaskEnter(event)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-col">
+            <!-- Calendário -->
+            <div class="card calendar-module">
+                <div class="calendar-header">
+                    <i class="fas fa-chevron-left" onclick="changeMonth(-1)"></i>
+                    <span id="calendar-month-year" onclick="openCalendarModal()" title="Selecionar mês/ano">Mês Ano</span>
+                    <i class="fas fa-chevron-right" onclick="changeMonth(1)"></i>
+                </div>
+                <div class="calendar-grid" id="calendar-days">
+                    <!-- Gerado via JS -->
+                </div>
+            </div>
+
+            <!-- Versículo do Dia (iFrame YouVersion) -->
+            <div class="card verse-module">
+                <iframe class="verse-iframe" src="https://www.bible.com/pt/verse-of-the-day"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hub de Links (Menu Lateral Retrátil - ESQUERDA) -->
+    <div class="sidebar-trigger-area"></div>
+    <div class="sidebar-wrapper">
+        <div class="hub-sidebar">
+            <h2 class="hub-title">Acessos Rápidos</h2>
+            <div class="app-grid" id="hub-grid">
+                <!-- Gerado via JS -->
+            </div>
+        </div>
+        <div class="sidebar-handle">
+            <i class="fas fa-chevron-right"></i>
+        </div>
+    </div>
+
+    <!-- Modais Ocultos -->
+    <div class="modal-overlay" id="search-modal">
+        <div class="modal">
+            <h3><span id="search-modal-title">Buscar Cidade</span> <button class="modal-close" onclick="closeModal('search-modal')">&times;</button></h3>
+            <button class="action-btn" id="reset-weather-btn" style="display:none; margin-bottom: 15px;" onclick="detectMyWeatherLocation()"><i class="fas fa-location-crosshairs"></i> Detectar Minha Localização</button>
+            <input type="text" class="search-input" id="city-search" placeholder="Escreva o nome da cidade..." onkeyup="searchLocation(this.value)">
+            <ul class="search-results" id="search-results"></ul>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="folder-modal">
+        <div class="modal">
+            <h3><span id="folder-modal-title">Pasta</span> <button class="modal-close" onclick="closeModal('folder-modal')">&times;</button></h3>
+            <div class="folder-modal-grid" id="folder-content"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="saved-notes-modal">
+        <div class="modal">
+            <h3><span>Minhas Notas Salvas</span> <button class="modal-close" onclick="closeModal('saved-notes-modal')">&times;</button></h3>
+            <div class="saved-notes-grid" id="saved-notes-grid">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="pomo-settings-modal">
+        <div class="modal" style="width: 350px;">
+            <h3><span>Ajustar Pomodoro</span> <button class="modal-close" onclick="closeModal('pomo-settings-modal')">&times;</button></h3>
+            <div style="display:flex; flex-direction:column; gap:15px; margin-top: 15px;">
+                <label>Foco (minutos): 
+                    <input type="number" id="pomo-work-input" value="25" class="search-input" min="1" max="120" style="margin-bottom:0; margin-top:5px;">
+                </label>
+                <label>Pausa (minutos): 
+                    <input type="number" id="pomo-break-input" value="5" class="search-input" min="1" max="60" style="margin-bottom:0; margin-top:5px;">
+                </label>
+                <button class="action-btn" onclick="savePomodoroSettings()">Salvar Tempos</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="calendar-selector-modal">
+        <div class="modal" style="width: 380px; text-align: center;">
+            <h3 style="text-align: left;"><span>Selecionar Data</span> <button class="modal-close" onclick="closeModal('calendar-selector-modal')">&times;</button></h3>
+            
+            <div id="cal-modal-nav" style="display:flex; justify-content:space-between; align-items:center; margin: 20px 0 30px 0; font-size: 1.2rem; font-weight: 500;">
+                <!-- Gerado via JS -->
+            </div>
+            
+            <div id="cal-modal-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px 10px;">
+                <!-- Gerado via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Novo Modal: Compromissos do Dia -->
+    <div class="modal-overlay" id="day-events-modal">
+        <div class="modal" style="width: 400px;">
+            <h3><span id="day-events-title">Compromissos</span> <button class="modal-close" onclick="closeModal('day-events-modal')">&times;</button></h3>
+            
+            <div id="day-events-list" style="margin: 15px 0; max-height: 200px; overflow-y: auto;">
+                <!-- Preenchido via JS -->
+            </div>
+
+            <hr style="border: none; border-top: 1px solid var(--card-border); margin: 15px 0;">
+            
+            <h4 style="margin-bottom: 10px; font-size: 0.95rem;">Adicionar / Editar</h4>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-bottom: 15px;">
+                <input type="text" id="event-title" class="search-input" style="margin-bottom:0;" placeholder="Título do compromisso">
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="time" id="event-time" class="search-input" style="width: 120px; margin-bottom:0;">
+                    <label style="display:flex; align-items:center; gap:5px; cursor:pointer; font-size:0.9rem;">
+                        <input type="checkbox" id="event-allday" onchange="toggleAllDay()"> Dia todo
+                    </label>
+                </div>
+                <div style="margin-top: 5px;">
+                    <h5 style="font-size: 0.85rem; margin-bottom: 8px;">Notificar-me:</h5>
+                    <div style="display:flex; flex-wrap: wrap; gap: 10px; font-size: 0.8rem;">
+                        <label style="display:flex; align-items:center; gap:4px; cursor:pointer;">
+                            <input type="checkbox" class="event-notif-cb" value="0" checked> Na hora
+                        </label>
+                        <label style="display:flex; align-items:center; gap:4px; cursor:pointer;">
+                            <input type="checkbox" class="event-notif-cb" value="30"> 30 min antes
+                        </label>
+                        <label style="display:flex; align-items:center; gap:4px; cursor:pointer;">
+                            <input type="checkbox" class="event-notif-cb" value="60"> 1 hora antes
+                        </label>
+                        <label style="display:flex; align-items:center; gap:4px; cursor:pointer;">
+                            <input type="checkbox" class="event-notif-cb" value="1440"> 1 dia antes
+                        </label>
+                        <label style="display:flex; align-items:center; gap:4px; cursor:pointer;">
+                            <input type="checkbox" class="event-notif-cb" value="10080"> 1 sem. antes
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button class="action-btn" id="event-save-btn" onclick="saveEvent()">Salvar Compromisso</button>
+        </div>
+    </div>
+
+    <script>
+        // --- TEMA CLARO/ESCURO ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btnIcon = document.querySelector('#theme-btn i');
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('hub-theme', newTheme);
+            
+            if (newTheme === 'dark') {
+                btnIcon.className = 'fas fa-sun';
+            } else {
+                btnIcon.className = 'fas fa-moon';
+            }
+        }
+        const savedTheme = localStorage.getItem('hub-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.querySelector('#theme-btn i').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+        // --- DADOS E LINKS (Atualizado para SVGs da Wikimedia) ---
+        const getFavicon = (domain) => `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+        
+        const linksData = {
+            folders: [
+                {
+                    id: 'gworkspace', name: 'GWorkspace',
+                    apps: [
+                        { name: 'Pesquisa', url: 'https://google.com', icon: getFavicon('google.com') },
+                        { name: 'Docs', url: 'https://docs.google.com', icon: 'https://commons.wikimedia.org/wiki/Special:FilePath/Google_Docs_logo_(2014-2020).svg' },
+                        { name: 'Sheets', url: 'https://sheets.google.com', icon: 'https://commons.wikimedia.org/wiki/Special:FilePath/Google_Sheets_2020_Logo.svg' },
+                        { name: 'Slides', url: 'https://slides.google.com', icon: 'https://commons.wikimedia.org/wiki/File:Google_Slides_logo_%282014-2020%29.svg' },
+                        { name: 'Gemini', url: 'https://gemini.google.com', icon: getFavicon('gemini.google.com') },
+                        { name: 'Calendar', url: 'https://calendar.google.com', icon: 'https://commons.wikimedia.org/wiki/Special:FilePath/Google_Calendar_icon_(2020).svg' },
+                        { name: 'Keep', url: 'https://keep.google.com', icon: 'https://commons.wikimedia.org/wiki/Special:FilePath/Google_Keep_2020_Logo.svg' },
+                        { name: 'Drive', url: 'https://drive.google.com', icon: 'https://commons.wikimedia.org/wiki/Special:FilePath/Google_Drive_icon_(2020).svg' },
+                        { name: 'Gmail', url: 'https://mail.google.com', icon: 'https://commons.wikimedia.org/wiki/Special:FilePath/Gmail_icon_(2020).svg' },
+                        { name: 'Youtube', url: 'https://youtube.com', icon: getFavicon('youtube.com') },
+                        { name: 'Arts and Culture', url: 'https://artsandculture.google.com', icon: getFavicon('artsandculture.google.com') },
+                        { name: 'Tradutor', url: 'https://translate.google.com', icon: getFavicon('translate.google.com') },
+                        { name: 'Mapas', url: 'https://maps.google.com', icon: getFavicon('maps.google.com') },
+                        { name: 'Meet', url: 'https://meet.google.com', icon: 'https://commons.wikimedia.org/wiki/File:Google_Meet_icon_%282020%29.svg' },
+                        { name: 'Play Livros', url: 'https://play.google.com/books', icon: 'https://pt.wikipedia.org/wiki/Ficheiro:Google_Play_Books_icon_%282023%29.svg' },
+                    ]
+                },
+                {
+                    id: 'smm', name: 'Social Media',
+                    apps: [
+                        { name: 'Business', url: 'https://business.facebook.com', icon: getFavicon('business.facebook.com') },
+                        { name: 'Ads', url: 'https://adsmanager.facebook.com', icon: 'https://api.iconify.design/fa6-solid:bullhorn.svg?color=%231877f2' },
+                        { name: 'Facebook', url: 'https://facebook.com', icon: getFavicon('facebook.com') },
+                        { name: 'Instagram', url: 'https://instagram.com', icon: getFavicon('instagram.com') },
+                        { name: 'WhatsApp', url: 'https://web.whatsapp.com', icon: 'https://commons.wikimedia.org/wiki/Special:FilePath/WhatsApp.svg' },
+                        { name: 'Reddit', url: 'https://www.reddit.com/', icon: getFavicon('reddit.com') },
+                        { name: 'Telegram', url: 'https://web.telegram.org/', icon: getFavicon('telegram.org') },
+                        { name: 'Linkedin', url: 'https://linkedin.com/', icon: getFavicon('linkedin.com') },
+                    ]
+                },
+
+                {
+                    id: 'shop', name: 'Compras',
+                    apps: [
+                        { name: 'Amazon', url: 'https://amazon.com.br', icon: getFavicon('amazon.com') },
+                        { name: 'Shopee', url: 'https://shopee.com.br', icon: getFavicon('shopee.com.br') },
+                        { name: 'Shein', url: 'https://br.shein.com', icon: getFavicon('shein.com') },
+                        { name: 'Mercado Livre', url: 'https://www.mercadolivre.com.br', icon: getFavicon('mercadolivre.com.br') },
+                        { name: 'Steam', url: 'https://store.steampowered.com', icon: getFavicon('store.steampowered.com') },
+                        { name: 'Ifood', url: 'https://www.ifood.com.br/', icon: getFavicon('ifood.com.br') },
+                        { name: 'Ingresso', url: 'https://www.ingresso.com/', icon: getFavicon('ingresso.com') }
+                    ]
+                },
+
+                {
+                    id: 'study', name: 'Aulas',
+                    apps: [
+                        { name: 'SIGAA', url: 'https://sigaa.ufpb.br', icon: getFavicon('sigaa.ufpb.br') },
+                        { name: 'UNIFATECIE', url: 'https://portaldoaluno.fatecie.edu.br', icon: getFavicon('portaldoaluno.fatecie.edu.br') },
+                        { name: 'Udemy', url: 'https://udemy.com', icon: getFavicon('udemy.com') },
+                        { name: 'Coursera', url: 'https://coursera.org', icon: getFavicon('coursera.org') },
+                        { name: 'Hotmart', url: 'https://hotmart.com', icon: getFavicon('hotmart.com') },
+                        { name: 'Edx', url: 'https://edx.org', icon: getFavicon('edx.org') },
+                        { name: 'GBBC', url: 'https://gbbc.net', icon: getFavicon('gbbc.net') },
+                        { name: 'AWKNG', url: 'https://awkng.com', icon: getFavicon('awkng.com') },
+                        { name: 'Khan Academy', url: 'https://pt.khanacademy.org', icon: getFavicon('pt.khanacademy.org') },
+                        { name: 'Biblical Training', url: 'https://www.biblicaltraining.org', icon: getFavicon('biblicaltraining.org') },
+                        { name: 'Duolingo', url: 'http://duolingo.com', icon: getFavicon('duolingo.com') },
+                    ]
+                },
+
+                {
+                    id: 'organize', name: 'Estudo e Organização',
+                    apps: [
+                        { name: 'Notion', url: 'https://notion.so', icon: getFavicon('notion.so') },
+                        { name: 'Flipboard', url: 'https://flipboard.com', icon: 'https://pt.wikipedia.org/wiki/Ficheiro:Flipboard_logo.svg' },
+                        { name: 'Notegrity', url: 'https://notegrity.base44.app/', icon: getFavicon('notegrity.base44.app') },
+                        { name: 'XMind', url: 'http://app.xmind.com/', icon: getFavicon('app.xmind.com') }
+                    ]
+                },
+
+                {
+                    id: 'work', name: 'IA e Trabalho',
+                    apps: [
+                        { name: 'Trello', url: 'https://trello.com', icon: getFavicon('trello.com') },
+                        { name: 'ChatGPT', url: 'https://chat.openai.com', icon: getFavicon('chatgpt.com') },
+                        { name: 'Github', url: 'https://github.com', icon: getFavicon('github.com') },
+                        { name: 'Canva', url: 'https://www.canva.com', icon: getFavicon('canva.com') },
+                        { name: 'Base44', url: 'https://base44.app/', icon: getFavicon('base44.app') },
+                        { name: 'CapCut', url: 'https://www.capcut.com', icon: getFavicon('capcut.com') }
+                    ]
+                },
+
+                {
+                    id: 'stream', name: 'Entretenimento',
+                    apps: [
+                        { name: 'Netflix', url: 'https://netflix.com', icon: getFavicon('netflix.com') },
+                        { name: 'Disney+', url: 'https://disneyplus.com', icon: getFavicon('disneyplus.com') },
+                        { name: 'HBO', url: 'https://hbomax.com/', icon: getFavicon('hbomax.com') },
+                        { name: 'Prime Video', url: 'https://primevideo.com', icon: getFavicon('primevideo.com') },
+                        { name: 'Paramount', url: 'https://www.paramountplus.com', icon: getFavicon('paramountplus.com') },
+                        { name: 'AppleTV', url: 'https://tv.apple.com', icon: getFavicon('tv.apple.com') },
+                        { name: 'ClaroTV', url: 'https://www.clarotvmais.com.br', icon: getFavicon('clarotvmais.com.br') },
+                        { name: 'GloboPlay', url: 'https://globoplay.globo.com', icon: getFavicon('globoplay.globo.com') }
+                    ]
+                }
+            ],
+            standalone: [
+                { name: 'World Anvil', url: 'https://worldanvil.com', icon: getFavicon('worldanvil.com') },
+                { name: 'Spotify', url: 'https://spotify.com', icon: getFavicon('spotify.com') },
+                { name: 'Netzeroth', url: 'https://nexquestgames.github.io/Netzeroth/', icon: 'https://pt.wikipedia.org/wiki/Ficheiro:Twenty_sided_dice.png' },
+                
+            ]
+        };
+
+        // --- RELÓGIO & FUSOS ---
+        let extraTimezones = JSON.parse(localStorage.getItem('hubExtraTimezones') || '[]');
+        let currentModalContext = '';
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('main-clock').innerText = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            if(extraTimezones.length > 0) {
+                const extrasHtml = extraTimezones.map((tz, index) => {
+                    const time = new Date().toLocaleTimeString('pt-PT', { timeZone: tz.timezone, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    return `<span style="background: var(--hover-bg); padding: 4px 10px; border-radius: 12px; display:inline-flex; align-items:center; gap:6px;">
+                                ${tz.name}: <b>${time}</b>
+                                <i class="fas fa-times" style="cursor:pointer; opacity:0.6; font-size:0.8rem;" title="Remover" onclick="removeTimezone(${index}); event.stopPropagation();"></i>
+                            </span>`;
+                }).join('');
+                document.getElementById('extra-clocks').innerHTML = extrasHtml;
+            } else {
+                document.getElementById('extra-clocks').innerHTML = '';
+            }
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        function removeTimezone(index) {
+            extraTimezones.splice(index, 1);
+            localStorage.setItem('hubExtraTimezones', JSON.stringify(extraTimezones));
+            updateClock();
+        }
+
+        // --- CLIMA ---
+        async function fetchWeather(lat, lon, cityName) {
+            try {
+                document.getElementById('city-name').innerText = cityName;
+                // Atualizado para buscar current de forma mais detalhada incluindo is_day, vento e precipitação
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,is_day,precipitation,weather_code,wind_speed_10m`);
+                const data = await res.json();
+                
+                const temp = Math.round(data.current.temperature_2m);
+                const code = data.current.weather_code;
+                const isDay = data.current.is_day === 1;
+                const wind = data.current.wind_speed_10m;
+                const precip = data.current.precipitation;
+                
+                document.getElementById('temp').innerText = `${temp}°C`;
+                document.getElementById('weather-wind').innerHTML = `<i class="fas fa-wind"></i> ${wind} km/h`;
+                document.getElementById('weather-precip').innerHTML = `<i class="fas fa-tint"></i> ${precip} mm`;
+                
+                let emoji = '☀️';
+                let desc = 'Limpo';
+
+                // Tabela de Códigos Meteorológicos (WMO) com traduções precisas e distinção de Dia/Noite
+                if (code === 0) {
+                    desc = "Céu limpo";
+                    emoji = isDay ? '☀️' : '🌙';
+                } else if (code === 1) {
+                    desc = "Predominantemente limpo";
+                    emoji = isDay ? '🌤️' : '☁️'; 
+                } else if (code === 2) {
+                    desc = "Parcialmente nublado";
+                    emoji = isDay ? '⛅' : '☁️';
+                } else if (code === 3) {
+                    desc = "Nublado";
+                    emoji = '☁️';
+                } else if (code === 45 || code === 48) {
+                    desc = "Névoa";
+                    emoji = '🌫️';
+                } else if (code >= 51 && code <= 55) {
+                    desc = "Chuvisco";
+                    emoji = isDay ? '🌦️' : '🌧️';
+                } else if (code >= 56 && code <= 57) {
+                    desc = "Chuvisco gelado";
+                    emoji = '🌧️';
+                } else if (code >= 61 && code <= 65) {
+                    desc = "Chuva";
+                    emoji = '🌧️';
+                } else if (code >= 66 && code <= 67) {
+                    desc = "Chuva congelante";
+                    emoji = '🌧️';
+                } else if (code >= 71 && code <= 77) {
+                    desc = "Neve";
+                    emoji = '❄️';
+                } else if (code >= 80 && code <= 82) {
+                    desc = "Pancadas de chuva";
+                    emoji = isDay ? '🌦️' : '🌧️';
+                } else if (code >= 85 && code <= 86) {
+                    desc = "Pancadas de neve";
+                    emoji = '🌨️';
+                } else if (code >= 95) {
+                    desc = "Tempestade";
+                    emoji = '⛈️';
+                } else {
+                    desc = "Indefinido";
+                    emoji = isDay ? '☀️' : '🌙';
+                }
+
+                document.getElementById('weather-emoji').innerText = emoji;
+                document.getElementById('weather-desc').innerText = desc;
+
+                // Salvar local escolhido
+                localStorage.setItem('hubWeather', JSON.stringify({lat, lon, cityName}));
+            } catch (e) { console.error("Erro clima", e); }
+        }
+
+        async function detectMyWeatherLocation() {
+            closeModal('search-modal');
+            document.getElementById('city-name').innerText = "Detectando...";
+            document.getElementById('temp').innerText = "--°C";
+            localStorage.removeItem('hubWeather');
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        try {
+                            const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=pt`);
+                            const data = await res.json();
+                            const region = data.principalSubdivisionCode ? data.principalSubdivisionCode.split('-').pop() : data.principalSubdivision;
+                            const cityName = `${data.city || data.locality}, ${region}`;
+                            fetchWeather(lat, lon, cityName);
+                        } catch (e) {
+                            fetchWeather(lat, lon, "Localização Atual");
+                        }
+                    },
+                    (error) => {
+                        console.warn("Geolocalização negada ou falhou. Tentando por IP...", error);
+                        fetchLocationByIP();
+                    }
+                );
+            } else {
+                fetchLocationByIP();
+            }
+        }
+
+        async function fetchLocationByIP() {
+            try {
+                const res = await fetch('https://get.geojs.io/v1/ip/geo.json');
+                const data = await res.json();
+                fetchWeather(data.latitude, data.longitude, `${data.city}, ${data.region}`);
+            } catch (e) {
+                console.error("Falha ao obter localização por IP", e);
+                fetchWeather(-7.11532, -34.86105, "João Pessoa, PB"); // Fallback final
+            }
+        }
+
+        const savedWeather = JSON.parse(localStorage.getItem('hubWeather'));
+        if (savedWeather) {
+            fetchWeather(savedWeather.lat, savedWeather.lon, savedWeather.cityName);
+        } else {
+            detectMyWeatherLocation();
+        }
+
+        // --- MODAIS ---
+        function openWeatherModal() { 
+            currentModalContext = 'weather'; 
+            document.getElementById('search-modal-title').innerText = 'Alterar local'; 
+            document.getElementById('reset-weather-btn').style.display = 'block';
+            document.getElementById('search-modal').style.display = 'flex'; 
+        }
+        function openTimezoneModal() { 
+            currentModalContext = 'timezone'; 
+            document.getElementById('search-modal-title').innerText = 'Adicionar fuso (Máx 4)'; 
+            document.getElementById('reset-weather-btn').style.display = 'none';
+            document.getElementById('search-modal').style.display = 'flex'; 
+        }
+        function closeModal(id) { 
+            document.getElementById(id).style.display = 'none'; 
+            if(id === 'search-modal') {
+                document.getElementById('city-search').value = ''; 
+                document.getElementById('search-results').innerHTML = '';
+            }
+            if(id === 'day-events-modal') {
+                editingEventId = null;
+                document.getElementById('event-save-btn').innerText = 'Salvar Compromisso';
+                document.getElementById('event-time').value = '';
+                document.getElementById('event-title').value = '';
+                document.getElementById('event-allday').checked = false;
+                toggleAllDay();
+                
+                // Reseta os checkboxes de notificação para o padrão ("Na hora" marcado)
+                const cbs = document.querySelectorAll('.event-notif-cb');
+                cbs.forEach(cb => cb.checked = (cb.value === "0"));
+            }
+        }
+
+        // --- BUSCA CIDADES ---
+        let searchTimeout;
+        async function searchLocation(query) {
+            clearTimeout(searchTimeout);
+            if(query.length < 3) return;
+            searchTimeout = setTimeout(async () => {
+                const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=pt`);
+                const data = await res.json();
+                const list = document.getElementById('search-results');
+                list.innerHTML = '';
+                if(data.results) {
+                    data.results.forEach(city => {
+                        const li = document.createElement('li');
+                        const displayName = `${city.name}, ${city.admin1 || ''} - ${city.country}`;
+                        li.innerText = displayName;
+                        li.onclick = () => {
+                            if(currentModalContext === 'weather') {
+                                fetchWeather(city.latitude, city.longitude, displayName);
+                            } else if (currentModalContext === 'timezone' && extraTimezones.length < 4 && city.timezone) {
+                                extraTimezones.push({ name: city.name, timezone: city.timezone });
+                                localStorage.setItem('hubExtraTimezones', JSON.stringify(extraTimezones));
+                                updateClock();
+                            }
+                            closeModal('search-modal');
+                        };
+                        list.appendChild(li);
+                    });
+                }
+            }, 400);
+        }
+
+        // --- POMODORO ---
+        let pomoWorkTime = parseInt(localStorage.getItem('hubPomoWork')) || 25;
+        let pomoBreakTime = parseInt(localStorage.getItem('hubPomoBreak')) || 5;
+        let pomoTime = pomoWorkTime * 60; 
+        let pomoInterval = null; 
+        let isPomoRunning = false;
+        let isPomoWorkSession = true;
+
+        function updatePomoDisplay() {
+            document.getElementById('pomo-display').innerText = `${Math.floor(pomoTime/60).toString().padStart(2,'0')}:${(pomoTime%60).toString().padStart(2,'0')}`;
+        }
+        
+        function openPomodoroModal() {
+            document.getElementById('pomo-work-input').value = pomoWorkTime;
+            document.getElementById('pomo-break-input').value = pomoBreakTime;
+            document.getElementById('pomo-settings-modal').style.display = 'flex';
+        }
+
+        function savePomodoroSettings() {
+            pomoWorkTime = parseInt(document.getElementById('pomo-work-input').value) || 25;
+            pomoBreakTime = parseInt(document.getElementById('pomo-break-input').value) || 5;
+            localStorage.setItem('hubPomoWork', pomoWorkTime);
+            localStorage.setItem('hubPomoBreak', pomoBreakTime);
+            resetPomodoro();
+            closeModal('pomo-settings-modal');
+        }
+
+        function togglePomodoro() {
+            const icon = document.getElementById('pomo-play-icon');
+            if(isPomoRunning) { clearInterval(pomoInterval); icon.className = 'fas fa-play'; }
+            else {
+                pomoInterval = setInterval(() => {
+                    if(pomoTime > 0) { 
+                        pomoTime--; 
+                        updatePomoDisplay(); 
+                    } else { 
+                        clearInterval(pomoInterval); 
+                        isPomoRunning = false;
+                        icon.className = 'fas fa-play';
+                        
+                        if(isPomoWorkSession) {
+                            alert("Foco concluído! Hora de uma pausa.");
+                            isPomoWorkSession = false;
+                            pomoTime = pomoBreakTime * 60;
+                            document.getElementById('pomo-display').style.color = '#4caf50';
+                        } else {
+                            alert("Pausa concluída! De volta ao foco.");
+                            isPomoWorkSession = true;
+                            pomoTime = pomoWorkTime * 60;
+                            document.getElementById('pomo-display').style.color = '';
+                        }
+                        updatePomoDisplay();
+                    }
+                }, 1000);
+                icon.className = 'fas fa-pause';
+            }
+            isPomoRunning = !isPomoRunning;
+        }
+
+        function resetPomodoro() { 
+            clearInterval(pomoInterval); 
+            isPomoRunning = false; 
+            isPomoWorkSession = true;
+            pomoTime = pomoWorkTime * 60; 
+            document.getElementById('pomo-play-icon').className = 'fas fa-play'; 
+            document.getElementById('pomo-display').style.color = '';
+            updatePomoDisplay(); 
+        }
+        updatePomoDisplay();
+
+        // --- POST-IT: TEXTO, LISTA & SALVAMENTO ---
+        const postitCard = document.getElementById('postit-card');
+        const textArea = document.getElementById('postit-text');
+        const taskContainer = document.getElementById('tasklist-container');
+        const taskUl = document.getElementById('task-ul');
+        const taskInput = document.getElementById('task-add-input');
+        
+        let currentNoteMode = 'text';
+        let tasks = [];
+        let currentColor = '#fdf5c9';
+
+        function loadCurrentDraft() {
+            currentColor = localStorage.getItem('quickNoteColor') || '#fdf5c9';
+            changePostitColor(currentColor);
+            currentNoteMode = localStorage.getItem('quickNoteMode') || 'text';
+            
+            if(currentNoteMode === 'text') {
+                textArea.value = localStorage.getItem('quickNote') || '';
+                textArea.style.display = 'block';
+                taskContainer.style.display = 'none';
+            } else {
+                tasks = JSON.parse(localStorage.getItem('quickNoteTasks') || '[]');
+                textArea.style.display = 'none';
+                taskContainer.style.display = 'flex';
+                renderTasks();
+            }
+        }
+
+        function changePostitColor(color) {
+            currentColor = color;
+            postitCard.style.background = color;
+            localStorage.setItem('quickNoteColor', color);
+        }
+
+        function togglePostitMode() {
+            currentNoteMode = currentNoteMode === 'text' ? 'task' : 'text';
+            localStorage.setItem('quickNoteMode', currentNoteMode);
+            loadCurrentDraft();
+        }
+
+        textArea.addEventListener('input', (e) => localStorage.setItem('quickNote', e.target.value));
+
+        function renderTasks() {
+            taskUl.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = `task-li ${task.done ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTaskDone(${index})">
+                    <input type="text" value="${task.text}" onchange="updateTaskText(${index}, this.value)">
+                    <i class="fas fa-times" style="cursor:pointer; color:#ff4d4d; opacity:0.5;" onclick="removeTask(${index})"></i>
+                `;
+                taskUl.appendChild(li);
+            });
+            localStorage.setItem('quickNoteTasks', JSON.stringify(tasks));
+        }
+
+        function handleTaskEnter(e) {
+            if(e.key === 'Enter' && taskInput.value.trim() !== '') {
+                tasks.push({ text: taskInput.value.trim(), done: false });
+                taskInput.value = '';
+                renderTasks();
+            }
+        }
+        function toggleTaskDone(index) { tasks[index].done = !tasks[index].done; renderTasks(); }
+        function updateTaskText(index, val) { tasks[index].text = val; renderTasks(); }
+        function removeTask(index) { tasks.splice(index, 1); renderTasks(); }
+
+        function saveCurrentNote() {
+            let savedNotes = JSON.parse(localStorage.getItem('savedHubNotes') || '[]');
+            const dateStr = new Date().toLocaleDateString('pt-PT', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'});
+            
+            let noteContent = '';
+            let noteTitle = '';
+
+            if (currentNoteMode === 'text') {
+                if(!textArea.value.trim()) return alert("A nota está vazia.");
+                noteContent = textArea.value;
+                noteTitle = noteContent.split('\n')[0].substring(0, 20) + '...';
+            } else {
+                if(tasks.length === 0) return alert("A lista está vazia.");
+                noteContent = JSON.stringify(tasks);
+                noteTitle = "Lista: " + tasks[0].text.substring(0, 15) + '...';
+            }
+
+            savedNotes.push({
+                id: Date.now(),
+                type: currentNoteMode,
+                content: noteContent,
+                color: currentColor,
+                date: dateStr,
+                title: noteTitle
+            });
+
+            localStorage.setItem('savedHubNotes', JSON.stringify(savedNotes));
+            
+            const icon = document.querySelector('.fa-save');
+            icon.style.color = '#4caf50';
+            setTimeout(() => icon.style.color = '', 1000);
+            
+            textArea.value = ''; localStorage.setItem('quickNote', '');
+            tasks = []; renderTasks();
+        }
+
+        function openSavedNotesModal() {
+            const grid = document.getElementById('saved-notes-grid');
+            grid.innerHTML = '';
+            const savedNotes = JSON.parse(localStorage.getItem('savedHubNotes') || '[]');
+
+            if(savedNotes.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#888;">Nenhuma nota salva.</p>';
+            } else {
+                savedNotes.forEach(note => {
+                    const div = document.createElement('div');
+                    div.className = 'saved-note-card';
+                    div.style.backgroundColor = note.color;
+                    
+                    let preview = note.type === 'text' ? note.content.substring(0, 40) : (JSON.parse(note.content).length + ' tarefas');
+                    
+                    div.innerHTML = `
+                        <div class="note-title">${note.title}</div>
+                        <div class="note-preview">${preview}</div>
+                        <div style="font-size:0.65rem; opacity:0.6; margin-top:8px;">${note.date}</div>
+                        <i class="fas fa-trash delete-btn" onclick="deleteSavedNote(${note.id}, event)"></i>
+                    `;
+                    div.onclick = () => loadSavedNoteToPostit(note);
+                    grid.appendChild(div);
+                });
+            }
+            document.getElementById('saved-notes-modal').style.display = 'flex';
+        }
+
+        function deleteSavedNote(id, event) {
+            event.stopPropagation();
+            let savedNotes = JSON.parse(localStorage.getItem('savedHubNotes') || '[]');
+            savedNotes = savedNotes.filter(n => n.id !== id);
+            localStorage.setItem('savedHubNotes', JSON.stringify(savedNotes));
+            openSavedNotesModal();
+        }
+
+        function loadSavedNoteToPostit(note) {
+            changePostitColor(note.color);
+            currentNoteMode = note.type;
+            localStorage.setItem('quickNoteMode', currentNoteMode);
+            
+            if(note.type === 'text') {
+                textArea.value = note.content;
+                localStorage.setItem('quickNote', note.content);
+                textArea.style.display = 'block'; taskContainer.style.display = 'none';
+            } else {
+                tasks = JSON.parse(note.content);
+                renderTasks();
+                textArea.style.display = 'none'; taskContainer.style.display = 'flex';
+            }
+            closeModal('saved-notes-modal');
+        }
+
+        loadCurrentDraft();
+
+        // --- CALENDÁRIO COM COMPROMISSOS E NOTIFICAÇÕES ---
+        let currentMonth = new Date().getMonth(); 
+        let currentYear = new Date().getFullYear();
+        let scheduledEvents = JSON.parse(localStorage.getItem('hubCalendarEvents') || '{}');
+        let notifiedEvents = JSON.parse(localStorage.getItem('hubNotifiedEvents') || '[]');
+        let selectedDateForEvent = null;
+        let editingEventId = null;
+
+        // Solicita permissão para notificações
+        function requestNotificationPermission() {
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+        }
+
+        // Loop verificador de notificações a cada 1 minuto
+        setInterval(() => {
+            if (Notification.permission !== "granted") return;
+            
+            const now = new Date();
+            const nowStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            
+            Object.keys(scheduledEvents).forEach(dateStr => {
+                scheduledEvents[dateStr].forEach(ev => {
+                    // Trata eventos salvos em versões antigas sem os novos atributos
+                    const evOffsets = ev.notifOffsets || [0];
+                    const isAllDay = ev.allDay || false;
+                    
+                    const [y, m, d] = dateStr.split('-');
+                    const evTime = isAllDay ? '09:00' : ev.time;
+                    const [h, min] = evTime.split(':');
+                    const eventDateTime = new Date(y, m - 1, d, h, min);
+
+                    evOffsets.forEach(offset => {
+                        const notifTime = new Date(eventDateTime.getTime() - offset * 60000); // subtrai minutos
+                        const nY = notifTime.getFullYear();
+                        const nM = String(notifTime.getMonth() + 1).padStart(2, '0');
+                        const nD = String(notifTime.getDate()).padStart(2, '0');
+                        const nH = String(notifTime.getHours()).padStart(2, '0');
+                        const nMin = String(notifTime.getMinutes()).padStart(2, '0');
+                        
+                        const notifStr = `${nY}-${nM}-${nD} ${nH}:${nMin}`;
+                        
+                        if (nowStr === notifStr) {
+                            const notifId = `${dateStr}-${ev.id}-${offset}`;
+                            if (!notifiedEvents.includes(notifId)) {
+                                let offsetText = "agora";
+                                if (offset === 30) offsetText = "em 30 minutos";
+                                else if (offset === 60) offsetText = "em 1 hora";
+                                else if (offset === 1440) offsetText = "amanhã";
+                                else if (offset === 10080) offsetText = "na próxima semana";
+                                
+                                const timeLabel = isAllDay ? 'Dia todo' : ev.time;
+
+                                new Notification("Lembrete: " + ev.title, {
+                                    body: `O evento (${timeLabel}) acontecerá ${offsetText}.`,
+                                    icon: 'https://cdn-icons-png.flaticon.com/512/833/833602.png'
+                                });
+                                
+                                notifiedEvents.push(notifId);
+                                if (notifiedEvents.length > 200) notifiedEvents.shift(); 
+                                localStorage.setItem('hubNotifiedEvents', JSON.stringify(notifiedEvents));
+                            }
+                        }
+                    });
+                });
+            });
+        }, 60000); // 60.000 ms = 1 minuto
+
+        function toggleAllDay() {
+            const isAllDay = document.getElementById('event-allday').checked;
+            const timeInput = document.getElementById('event-time');
+            if (isAllDay) {
+                timeInput.disabled = true;
+                timeInput.style.opacity = '0.5';
+            } else {
+                timeInput.disabled = false;
+                timeInput.style.opacity = '1';
+            }
+        }
+
+        function renderCalendar() {
+            const daysContainer = document.getElementById('calendar-days'); 
+            daysContainer.innerHTML = '';
+            
+            const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            document.getElementById('calendar-month-year').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            ['D','S','T','Q','Q','S','S'].forEach(day => daysContainer.innerHTML += `<div class="calendar-day-name">${day}</div>`);
+            
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay(); 
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const today = new Date();
+            
+            for(let i = 0; i < firstDay; i++) daysContainer.innerHTML += `<div></div>`;
+            
+            for(let i = 1; i <= daysInMonth; i++) {
+                const isToday = i === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+                const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                
+                // Checar se há eventos para colocar a bolinha
+                const hasEvents = scheduledEvents[dateString] && scheduledEvents[dateString].length > 0;
+                
+                daysContainer.innerHTML += `<div class="calendar-day ${isToday ? 'active' : ''} ${hasEvents ? 'has-event' : ''}" onclick="openDayEventsModal('${dateString}')">${i}</div>`;
+            }
+        }
+        
+        function changeMonth(dir) {
+            currentMonth += dir;
+            if(currentMonth > 11) { currentMonth = 0; currentYear++; }
+            if(currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        }
+
+        // Funções do Modal de Eventos do Dia
+        function openDayEventsModal(dateStr) {
+            selectedDateForEvent = dateStr;
+            const [year, month, day] = dateStr.split('-');
+            document.getElementById('day-events-title').innerText = `Dia ${day}/${month}/${year}`;
+            
+            renderDayEventsList();
+            document.getElementById('day-events-modal').style.display = 'flex';
+        }
+
+        function renderDayEventsList() {
+            const listDiv = document.getElementById('day-events-list');
+            listDiv.innerHTML = '';
+            
+            if (scheduledEvents[selectedDateForEvent] && scheduledEvents[selectedDateForEvent].length > 0) {
+                const events = scheduledEvents[selectedDateForEvent].sort((a, b) => {
+                    // Coloca "dia todo" no topo
+                    if (a.allDay && !b.allDay) return -1;
+                    if (!a.allDay && b.allDay) return 1;
+                    return (a.time || "").localeCompare(b.time || "");
+                });
+                
+                events.forEach(ev => {
+                    const timeLabel = ev.allDay ? 'Dia todo' : ev.time;
+                    const item = document.createElement('div');
+                    item.className = 'event-item';
+                    item.innerHTML = `
+                        <div class="event-item-info">
+                            <span class="event-item-time">${timeLabel}</span>
+                            <span class="event-item-title">${ev.title}</span>
+                        </div>
+                        <div class="event-actions">
+                            <i class="fas fa-edit" title="Editar" onclick="prepareEditEvent(${ev.id})"></i>
+                            <i class="fas fa-trash" title="Remover" onclick="deleteEvent(${ev.id})"></i>
+                        </div>
+                    `;
+                    listDiv.appendChild(item);
+                });
+            } else {
+                listDiv.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem; text-align:center;">Nenhum compromisso marcado.</p>';
+            }
+        }
+
+        function saveEvent() {
+            const isAllDay = document.getElementById('event-allday').checked;
+            const timeVal = document.getElementById('event-time').value;
+            const titleVal = document.getElementById('event-title').value.trim();
+            
+            if (!titleVal) {
+                alert("Por favor, preencha o título do compromisso.");
+                return;
+            }
+            if (!isAllDay && !timeVal) {
+                alert("Por favor, preencha a hora ou marque 'Dia todo'.");
+                return;
+            }
+
+            const notifOffsets = Array.from(document.querySelectorAll('.event-notif-cb:checked')).map(cb => parseInt(cb.value));
+
+            // Pede permissão caso ainda não tenha dado
+            requestNotificationPermission();
+
+            if (!scheduledEvents[selectedDateForEvent]) {
+                scheduledEvents[selectedDateForEvent] = [];
+            }
+
+            if (editingEventId !== null) {
+                // Editar existente
+                const index = scheduledEvents[selectedDateForEvent].findIndex(e => e.id === editingEventId);
+                if (index !== -1) {
+                    scheduledEvents[selectedDateForEvent][index].time = isAllDay ? '' : timeVal;
+                    scheduledEvents[selectedDateForEvent][index].title = titleVal;
+                    scheduledEvents[selectedDateForEvent][index].allDay = isAllDay;
+                    scheduledEvents[selectedDateForEvent][index].notifOffsets = notifOffsets;
+                }
+                editingEventId = null;
+                document.getElementById('event-save-btn').innerText = 'Salvar Compromisso';
+            } else {
+                // Criar novo
+                scheduledEvents[selectedDateForEvent].push({
+                    id: Date.now(),
+                    time: isAllDay ? '' : timeVal,
+                    title: titleVal,
+                    allDay: isAllDay,
+                    notifOffsets: notifOffsets
+                });
+            }
+
+            localStorage.setItem('hubCalendarEvents', JSON.stringify(scheduledEvents));
+            
+            document.getElementById('event-time').value = '';
+            document.getElementById('event-title').value = '';
+            document.getElementById('event-allday').checked = false;
+            toggleAllDay();
+            
+            const cbs = document.querySelectorAll('.event-notif-cb');
+            cbs.forEach(cb => cb.checked = (cb.value === "0"));
+            
+            renderDayEventsList();
+            renderCalendar(); // Atualiza a visualização da grade (ponto cinza)
+        }
+
+        function prepareEditEvent(id) {
+            const ev = scheduledEvents[selectedDateForEvent].find(e => e.id === id);
+            if (ev) {
+                document.getElementById('event-allday').checked = ev.allDay || false;
+                toggleAllDay();
+                document.getElementById('event-time').value = ev.time || '';
+                document.getElementById('event-title').value = ev.title;
+                
+                const evOffsets = ev.notifOffsets || [0];
+                document.querySelectorAll('.event-notif-cb').forEach(cb => {
+                    cb.checked = evOffsets.includes(parseInt(cb.value));
+                });
+
+                editingEventId = id;
+                document.getElementById('event-save-btn').innerText = 'Atualizar Compromisso';
+            }
+        }
+
+        function deleteEvent(id) {
+            if (confirm("Deseja mesmo remover este compromisso?")) {
+                scheduledEvents[selectedDateForEvent] = scheduledEvents[selectedDateForEvent].filter(e => e.id !== id);
+                
+                // Limpa a data do objeto se não sobrar eventos
+                if (scheduledEvents[selectedDateForEvent].length === 0) {
+                    delete scheduledEvents[selectedDateForEvent];
+                }
+                
+                localStorage.setItem('hubCalendarEvents', JSON.stringify(scheduledEvents));
+                
+                if (editingEventId === id) {
+                    // Reseta o formulário se estiver apagando o que está editando
+                    document.getElementById('event-time').value = '';
+                    document.getElementById('event-title').value = '';
+                    editingEventId = null;
+                    document.getElementById('event-save-btn').innerText = 'Salvar Compromisso';
+                }
+
+                renderDayEventsList();
+                renderCalendar();
+            }
+        }
+
+        // --- MODAL DE SELEÇÃO DE MÊS/ANO/DÉCADA ---
+        let calModalView = 'months';
+        let calModalYear = currentYear;
+
+        function openCalendarModal() {
+            calModalView = 'months';
+            calModalYear = currentYear;
+            renderCalendarModal();
+            document.getElementById('calendar-selector-modal').style.display = 'flex';
+        }
+
+        function renderCalendarModal() {
+            const navContainer = document.getElementById('cal-modal-nav');
+            const gridContainer = document.getElementById('cal-modal-grid');
+            gridContainer.innerHTML = '';
+
+            if (calModalView === 'months') {
+                navContainer.innerHTML = `
+                    <i class="fas fa-chevron-left" style="cursor:pointer; padding:10px; color: var(--accent);" onclick="calModalYear--; renderCalendarModal()"></i>
+                    <span style="cursor:pointer; padding: 5px 15px; border-radius: 6px; transition: 0.2s;" onmouseover="this.style.background='var(--hover-bg)'" onmouseout="this.style.background='transparent'" onclick="calModalView = 'years'; renderCalendarModal()" title="Escolher outro ano">${calModalYear}</span>
+                    <i class="fas fa-chevron-right" style="cursor:pointer; padding:10px; color: var(--accent);" onclick="calModalYear++; renderCalendarModal()"></i>
+                `;
+
+                const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+                months.forEach((m, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'cal-grid-btn';
+                    btn.innerText = m;
+                    
+                    if (calModalYear === currentYear && i === currentMonth) {
+                        btn.classList.add('active');
+                    }
+                    
+                    btn.onclick = () => {
+                        currentYear = calModalYear;
+                        currentMonth = i;
+                        renderCalendar();
+                        closeModal('calendar-selector-modal');
+                    };
+                    gridContainer.appendChild(btn);
+                });
+
+            } else if (calModalView === 'years') {
+                const startYear = calModalYear - (calModalYear % 12); 
+                const endYear = startYear + 11;
+
+                navContainer.innerHTML = `
+                    <i class="fas fa-chevron-left" style="cursor:pointer; padding:10px; color: var(--accent);" onclick="calModalYear -= 12; renderCalendarModal()"></i>
+                    <span>${startYear} - ${endYear}</span>
+                    <i class="fas fa-chevron-right" style="cursor:pointer; padding:10px; color: var(--accent);" onclick="calModalYear += 12; renderCalendarModal()"></i>
+                `;
+
+                for (let y = startYear; y <= endYear; y++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'cal-grid-btn';
+                    btn.innerText = y;
+                    
+                    if (y === currentYear) {
+                        btn.classList.add('active');
+                    }
+
+                    btn.onclick = () => {
+                        calModalYear = y;
+                        calModalView = 'months';
+                        renderCalendarModal();
+                    };
+                    gridContainer.appendChild(btn);
+                }
+            }
+        }
+
+        renderCalendar(); 
+
+        // --- RENDERIZAR HUB DE LINKS ---
+        const hubGrid = document.getElementById('hub-grid');
+        linksData.folders.forEach(folder => {
+            const folderDiv = document.createElement('div'); folderDiv.className = 'folder'; folderDiv.onclick = () => openAppFolder(folder);
+            const iconContainer = document.createElement('div'); iconContainer.className = 'folder-icon-container';
+            folder.apps.slice(0, 9).forEach(app => {
+                const mini = document.createElement('div'); mini.className = 'mini-icon'; mini.style.backgroundImage = `url('${app.icon}')`;
+                iconContainer.appendChild(mini);
+            });
+            folderDiv.appendChild(iconContainer); folderDiv.innerHTML += `<span class="app-name">${folder.name}</span>`; hubGrid.appendChild(folderDiv);
+        });
+        linksData.standalone.forEach(app => {
+            const a = document.createElement('a'); a.className = 'app-item'; a.href = app.url; a.target = '_blank';
+            a.innerHTML = `<div class="app-icon" style="background-image: url('${app.icon}')"></div><span class="app-name">${app.name}</span>`;
+            hubGrid.appendChild(a);
+        });
+
+        function openAppFolder(folder) {
+            document.getElementById('folder-modal-title').innerText = folder.name;
+            const content = document.getElementById('folder-content'); content.innerHTML = '';
+            folder.apps.forEach(app => {
+                const a = document.createElement('a'); a.className = 'app-item'; a.href = app.url; a.target = '_blank';
+                a.innerHTML = `<div class="app-icon" style="background-image: url('${app.icon}')"></div><span class="app-name">${app.name}</span>`;
+                content.appendChild(a);
+            });
+            document.getElementById('folder-modal').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
