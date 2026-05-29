@@ -85,20 +85,22 @@
             transition: background 0.3s, border-color 0.3s;
         }
 
-        /* --- Grid Responsiva com 3 Colunas --- */
+        /* --- STREAMING_CHUNK:Configurando a Grade Responsiva Ampliada... --- */
+        /* --- Grid Responsiva com 3 Colunas Ampliadas --- */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(300px, 350px));
+            /* Aumentado a largura para preencher até 1450px, com colunas flexíveis usando 1fr */
+            grid-template-columns: repeat(3, minmax(320px, 1fr));
             justify-content: center;
-            gap: 20px;
-            max-width: 1150px;
+            gap: 24px;
+            max-width: 1450px;
             width: 100%;
         }
 
-        @media (max-width: 1050px) {
-            .dashboard-grid { grid-template-columns: repeat(2, minmax(300px, 380px)); }
+        @media (max-width: 1150px) {
+            .dashboard-grid { grid-template-columns: repeat(2, minmax(320px, 1fr)); }
         }
-        @media (max-width: 700px) {
+        @media (max-width: 750px) {
             .dashboard-grid { grid-template-columns: 1fr; }
         }
 
@@ -107,7 +109,7 @@
         /* --- Módulo: Saudação e Relógio --- */
         .greeting h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; }
         .greeting .time { font-size: 3.5rem; font-weight: 700; color: var(--accent); cursor: pointer; letter-spacing: -2px; }
-        .greeting p { color: var(--text-muted); font-size: 0.9rem; }
+        .greeting p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; font-style: italic; }
 
         /* --- Módulo: Clima --- */
         .weather-module { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -128,6 +130,7 @@
         .pomodoro-btn:hover { transform: scale(1.05); opacity: 0.9; }
         .pomodoro-settings { font-size: 0.85rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
 
+        /* --- STREAMING_CHUNK:Estilizando Post-it e Calendário... --- */
         /* --- Módulo: Post-it --- */
         .postit-module {
             background: #fdf5c9;
@@ -180,10 +183,57 @@
         }
         .calendar-day.active.has-event::after { background-color: #fff; }
 
+        /* --- Tooltip do Calendário (Resumo de Eventos) --- */
+        .day-tooltip {
+            position: absolute;
+            bottom: 115%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--modal-bg);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+            z-index: 50;
+            border: 1px solid var(--card-border);
+            text-align: left;
+            width: max-content;
+            max-width: 180px;
+        }
+        .day-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--modal-bg) transparent transparent transparent;
+        }
+        .calendar-day:hover .day-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        .tooltip-event {
+            margin-bottom: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .tooltip-event:last-child { margin-bottom: 0; }
+        .tooltip-time { font-weight: 600; color: var(--accent); margin-right: 5px; }
+
         /* --- Módulo: Versículo (Agora no meio) --- */
         .verse-module { padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 525px; }
         .verse-iframe { flex: 1; width: 100%; border: none; }
 
+        /* --- STREAMING_CHUNK:Estilizando Jogos e Sidebar... --- */
         /* --- Módulo: Widgets de Jogos (Abas) --- */
         .game-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid var(--card-border); }
         .game-tab { padding-bottom: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 500; color: var(--text-muted); transition: 0.2s; border-bottom: 2px solid transparent; }
@@ -237,7 +287,7 @@
         .gamesnacks-module { padding: 15px; }
         .gamesnacks-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .gamesnacks-header h3 { font-size: 1rem; font-weight: 600; }
-        .gamesnacks-iframe { width: 100%; height: 400px; border: none; border-radius: 10px; background: var(--hover-bg); }
+        .gamesnacks-iframe { width: 100%; height: 450px; border: none; border-radius: 10px; background: var(--hover-bg); }
 
         /* --- Menu Lateral Retrátil (Hub de Apps) --- */
         .sidebar-wrapper {
@@ -274,6 +324,7 @@
         .app-icon:hover { transform: scale(1.05); }
         .app-name { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px; }
 
+        /* --- STREAMING_CHUNK:Estilizando Modais... --- */
         /* --- Modais --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
@@ -341,6 +392,7 @@
         <i class="fas fa-moon"></i>
     </button>
 
+    <!-- --- STREAMING_CHUNK:Estruturando Corpo HTML Principal... --- -->
     <!-- Dashboard Principal em 3 Colunas -->
     <div class="dashboard-grid">
         
@@ -349,7 +401,8 @@
             <div class="card greeting">
                 <h2>Olá, Pethra! </h2>
                 <div class="time" id="main-clock" onclick="openTimezoneModal()">00:00:00</div>
-                <p>Torne o dia hoje mais divertido que ontem. Deus te abençoe!</p>
+                <!-- ID Adicionado para a frase diária -->
+                <p id="daily-quote">Carregando mensagem especial para hoje...</p>
                 <div id="extra-clocks" style="margin-top:10px; display:flex; gap:10px; font-size:0.8rem; color:var(--text-muted);"></div>
             </div>
 
@@ -363,7 +416,7 @@
                         <span id="weather-precip" title="Precipitação"><i class="fas fa-tint"></i> -- mm</span>
                     </div>
                 </div>
-                <div class="weather-icon" id="weather-emoji">☁️</div>
+                <div class="weather-icon" id="weather-emoji">⏳</div>
             </div>
 
             <div class="card pomodoro-module">
@@ -417,6 +470,7 @@
             </div>
         </div>
 
+        <!-- --- STREAMING_CHUNK:Estruturando a Coluna da Direita (Jogos)... --- -->
         <!-- COLUNA DIREITA: Jogos e Entretenimento -->
         <div class="right-col">
             
@@ -477,6 +531,7 @@
         </div>
     </div>
 
+    <!-- --- STREAMING_CHUNK:Renderizando Modais do HTML... --- -->
     <!-- Modais Ocultos (Buscar, Pastas, etc.) -->
     <div class="modal-overlay" id="search-modal">
         <div class="modal">
@@ -560,6 +615,7 @@
         </div>
     </div>
 
+    <!-- --- STREAMING_CHUNK:Inicializando Lógica de Tema e Dados... --- -->
     <script>
         // --- TEMA CLARO/ESCURO ---
         function toggleTheme() {
@@ -702,6 +758,63 @@
             ]
         };
 
+        // --- STREAMING_CHUNK:Configurando Lógica de Frase do Dia e Relógio... ---
+        // --- FRASE MOTIVACIONAL DO DIA ---
+        const motivationalQuotes = [
+            "\"Carpe Diem. Aproveitem o dia garotos, façam as suas vidas serem extraordinárias.\" — Professor Keating (Sociedade dos Poetas Mortos)",
+            "\"Bilbo nunca esperava que algo extraordinário lhe acontecesse... até que aconteceu. Esteja pronto!\" — Inspirado em J.R.R. Tolkien",
+            "\"Torne o dia hoje mais divertido que ontem. Deus te abençoe!\"",
+            "\"Tudo o que temos de decidir é o que fazer com o tempo que nos é dado.\" — Gandalf (O Senhor dos Anéis)",
+            "\"Existem coisas muito, muito melhores adiante do que qualquer uma que deixamos para trás.\" — C.S. Lewis",
+            "\"A vida passa muito depressa. Se não pararmos para curtir de vez em quando, ela passa e você nem vê.\" — Ferris Bueller (Curtindo a Vida Adoidado)",
+            "\"O seu futuro não está escrito ainda. O futuro de ninguém está. É o que você fizer dele, então faça com que seja bom!\" — Doc Brown (De Volta para o Futuro)",
+            "\"A memória é um jeito de segurar as coisas que você ama, as coisas que você é e que nunca quer perder.\" — Kevin Arnold (Anos Incríveis)",
+            "\"O passado pode doer. Mas do jeito que eu vejo, você pode fugir dele ou aprender com ele.\" — Rafiki (O Rei Leão)",
+            "\"A flor que desabrocha na adversidade é a mais rara e mais bela de todas.\" — O Imperador (Mulan)",
+            "\"As coisas que nos tornam diferentes são as coisas que nos tornam nós mesmos.\" — Ursinho Pooh",
+            "\"Nem todo dia é fácil, mas sempre tem algo de bom se você procurar bem.\" — Inspirado em Doug Funnie",
+            "\"Eu estou pronto, estou pronto, estou pronto!\" — Bob Esponja",
+            "\"Continue a nadar, continue a nadar!\" — Dory (Procurando Nemo)",
+            "\"A vida é o que acontece enquanto você está ocupado fazendo outros planos.\" — John Lennon",
+            "\"Tudo depende do jeito como você vê as coisas.\" — Pequeno Urso",
+            "\"Se você consegue imaginar, consegue criar.\" — Bob, o Construtor",
+            "\"É divertido fazer o impossível.\" — Walt Disney",
+            "\"Ao infinito e além! Faça de hoje uma grande aventura.\" — Inspirado em Buzz Lightyear",
+            "\"Você nunca é velho demais para definir outro objetivo ou sonhar um novo sonho.\" — C.S. Lewis",
+            "\"A vida se move muito rápido. Se você não parar e olhar ao redor de vez em quando, pode acabar perdendo.\" — Ferris Bueller (Curtindo a Vida Adoidado)",
+            "\"O ontem é história, o amanhã é um mistério, mas hoje é uma dádiva.\" — Mestre Oogway (Kung Fu Panda)",
+            "\"Hakuna Matata! Significa sem preocupações.\" — Timão e Pumba (O Rei Leão)",
+            "\"Acredite em você mesmo e haverá um dia em que os outros não terão escolha senão acreditar também.\" — Naruto Uzumaki (Naruto)",
+            "\"Se você consegue sonhar, você consegue fazer.\" — Inspirado em Walt Disney",
+            "\"As aventuras são ótimas, mas é melhor ainda quando você as vive de verdade.\" — Finn (Hora de Aventura)",
+            "\"O importante não é vencer, é nunca parar de jogar.\" — Ash Ketchum (Pokémon)",
+            "\"Você é mais forte do que pensa e mais corajoso do que imagina.\" — Christopher Robin (Ursinho Pooh)",
+            "\"Nunca é tarde demais para ser aquilo que você poderia ter sido.\" — Inspirado em George Eliot",
+            "\"Viver seria uma aventura e tanto!\" — Peter Pan",
+            "\"Mesmo milagres levam um tempinho.\" — Fada Madrinha (Cinderela)",
+            "\"Cada dia é uma nova chance para fazer algo incrível. Tá na hora de perceber o novo dia que vai nascer.\" — Arnold (Hey Arnold!)",
+            "\"A coragem não é a ausência do medo, mas agir apesar dele.\" — Simba (O Rei Leão)",
+            "\"Às vezes, a melhor forma de resolver um problema é simplesmente relaxar.\" — Jake (Hora de Aventura)",
+            "\"Siga em frente. Só continue em frente.\" — Wilbur Robinson (A Família do Futuro)",
+            "\"O verdadeiro fracasso é desistir de tentar.\" — Goku (Dragon Ball Z)",
+            "\"Tudo pode acontecer quando você acredita.\" — A Fada Azul (Pinóquio)",
+            "\"Você tem que aproveitar as pequenas coisas da vida.\" — Charlie Brown (Peanuts)",
+            "\"A amizade é a maior aventura de todas.\" — Frodo Bolseiro (O Senhor dos Anéis)",
+            "\"Os melhores dias ainda estão por vir.\" — Tio Iroh (Avatar: A Lenda de Aang)",
+            "\"Não deixe ninguém dizer que você não pode fazer algo.\" — Chris Gardner (À Procura da Felicidade)",
+            "\"Hoje é um ótimo dia para começar algo novo.\" — Fred Rogers",
+            "\"Sempre há esperança enquanto estivermos juntos.\" — Samwise Gamgee (O Senhor dos Anéis)",
+            "\"Você só vive uma vez, então faça valer a pena.\" — Inspirado em Rocket Power"
+        ];
+
+        function setDailyQuote() {
+            const today = new Date();
+            // Cria um índice previsível baseado na data exata para mudar apenas 1 vez por dia
+            const dayIndex = today.getDate() + today.getMonth() + today.getFullYear();
+            const quoteIndex = dayIndex % motivationalQuotes.length;
+            document.getElementById('daily-quote').innerText = motivationalQuotes[quoteIndex];
+        }
+
         // --- RELÓGIO & FUSOS ---
         let extraTimezones = JSON.parse(localStorage.getItem('hubExtraTimezones') || '[]');
         let currentModalContext = '';
@@ -723,9 +836,10 @@
                 document.getElementById('extra-clocks').innerHTML = '';
             }
         }
-        setInterval(updateClock, 1000); updateClock();
+        setInterval(updateClock, 1000); updateClock(); setDailyQuote();
         function removeTimezone(index) { extraTimezones.splice(index, 1); localStorage.setItem('hubExtraTimezones', JSON.stringify(extraTimezones)); updateClock(); }
 
+        // --- STREAMING_CHUNK:Configurando Módulos de Clima e Pomodoro... ---
         // --- CLIMA ---
         async function fetchWeather(lat, lon, cityName) {
             try {
@@ -743,13 +857,14 @@
                 
                 let emoji = '☀️'; let desc = 'Limpo';
                 if (code === 0) { desc = "Céu limpo"; emoji = isDay ? '☀️' : '🌙'; } 
-                else if (code === 1) { desc = "Predominantemente limpo"; emoji = isDay ? '🌤️' : '☁️'; } 
+                else if (code === 1) { desc = "Predominantemente limpo"; emoji = isDay ? '🌤️' : '🌙'; } 
                 else if (code === 2) { desc = "Parcialmente nublado"; emoji = isDay ? '⛅' : '☁️'; } 
                 else if (code === 3) { desc = "Nublado"; emoji = '☁️'; } 
                 else if (code >= 45 && code <= 48) { desc = "Névoa"; emoji = '🌫️'; } 
                 else if (code >= 51 && code <= 55) { desc = "Chuvisco"; emoji = isDay ? '🌦️' : '🌧️'; } 
-                else if (code >= 61 && code <= 65) { desc = "Chuva"; emoji = '🌧️'; } 
+                else if (code >= 61 && code <= 67) { desc = "Chuva"; emoji = '🌧️'; } 
                 else if (code >= 71 && code <= 77) { desc = "Neve"; emoji = '❄️'; } 
+                else if (code >= 80 && code <= 82) { desc = "Pancadas de chuva"; emoji = isDay ? '🌦️' : '🌧️'; }
                 else if (code >= 95) { desc = "Tempestade"; emoji = '⛈️'; } 
                 else { desc = "Indefinido"; emoji = isDay ? '☀️' : '🌙'; }
 
@@ -837,6 +952,7 @@
         }
         updatePomoDisplay();
 
+        // --- STREAMING_CHUNK:Configurando Funções do Post-it e Calendário... ---
         // --- POST-IT (TEXTO/TAREFAS) ---
         const postitCard = document.getElementById('postit-card');
         const textArea = document.getElementById('postit-text');
@@ -979,7 +1095,20 @@
                 const isToday = i === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
                 const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 const hasEvents = scheduledEvents[dateString] && scheduledEvents[dateString].length > 0;
-                daysContainer.innerHTML += `<div class="calendar-day ${isToday ? 'active' : ''} ${hasEvents ? 'has-event' : ''}" onclick="openDayEventsModal('${dateString}')">${i}</div>`;
+                
+                // Montar o tooltip se o dia tiver eventos
+                let tooltipHTML = '';
+                if (hasEvents) {
+                    // Clona e ordena os eventos para mostrar bonito no tooltip
+                    const sortedEvents = [...scheduledEvents[dateString]].sort((a, b) => { if (a.allDay && !b.allDay) return -1; if (!a.allDay && b.allDay) return 1; return (a.time || "").localeCompare(b.time || ""); });
+                    let eventsList = sortedEvents.map(ev => {
+                        const timeLabel = ev.allDay ? 'Dia todo' : ev.time;
+                        return `<div class="tooltip-event"><span class="tooltip-time">${timeLabel}</span> ${ev.title}</div>`;
+                    }).join('');
+                    tooltipHTML = `<div class="day-tooltip">${eventsList}</div>`;
+                }
+
+                daysContainer.innerHTML += `<div class="calendar-day ${isToday ? 'active' : ''} ${hasEvents ? 'has-event' : ''}" onclick="openDayEventsModal('${dateString}')">${i}${tooltipHTML}</div>`;
             }
         }
         function changeMonth(dir) { currentMonth += dir; if(currentMonth > 11) { currentMonth = 0; currentYear++; } if(currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); }
@@ -1086,7 +1215,8 @@
         });
 
 
-        // Demais Funções de Modais, etc. (Sem alterações na lógica)
+        // --- STREAMING_CHUNK:Gerenciando Modais Extras e Funcionalidades Globais... ---
+        // Demais Funções de Modais, etc.
         function toggleAllDay() { const isAllDay = document.getElementById('event-allday').checked; const timeInput = document.getElementById('event-time'); timeInput.disabled = isAllDay; timeInput.style.opacity = isAllDay ? '0.5' : '1'; }
         function openDayEventsModal(dateStr) {
             selectedDateForEvent = dateStr; const [year, month, day] = dateStr.split('-');
