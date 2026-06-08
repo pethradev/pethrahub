@@ -85,10 +85,11 @@
             transition: background 0.3s, border-color 0.3s;
         }
 
-        /* --- STREAMING_CHUNK:Configurando Grid Layout Ampliado... --- */
+        /* --- STREAMING_CHUNK:Configurando a Grade Responsiva Ampliada... --- */
         /* --- Grid Responsiva com 3 Colunas Ampliadas --- */
         .dashboard-grid {
             display: grid;
+            /* Aumentado a largura para preencher até 1450px, com colunas flexíveis usando 1fr */
             grid-template-columns: repeat(3, minmax(320px, 1fr));
             justify-content: center;
             gap: 24px;
@@ -129,6 +130,7 @@
         .pomodoro-btn:hover { transform: scale(1.05); opacity: 0.9; }
         .pomodoro-settings { font-size: 0.85rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
 
+        /* --- STREAMING_CHUNK:Estilizando Post-it e Calendário... --- */
         /* --- Módulo: Post-it --- */
         .postit-module {
             background: #fdf5c9;
@@ -165,7 +167,6 @@
         }
         .task-add::placeholder { color: rgba(0,0,0,0.4); }
 
-        /* --- STREAMING_CHUNK:Configurando Estilos do Calendário e Tooltip... --- */
         /* --- Módulo: Calendário --- */
         .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .calendar-header span { font-weight: 600; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: 0.2s; }
@@ -228,11 +229,11 @@
         .tooltip-event:last-child { margin-bottom: 0; }
         .tooltip-time { font-weight: 600; color: var(--accent); margin-right: 5px; }
 
-        /* --- Módulo: Versículo --- */
+        /* --- Módulo: Versículo (Agora no meio) --- */
         .verse-module { padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 525px; }
         .verse-iframe { flex: 1; width: 100%; border: none; }
 
-        /* --- STREAMING_CHUNK:Configurando Jogos e Sidebar... --- */
+        /* --- STREAMING_CHUNK:Estilizando Jogos e Sidebar... --- */
         /* --- Módulo: Widgets de Jogos (Abas) --- */
         .game-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid var(--card-border); }
         .game-tab { padding-bottom: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 500; color: var(--text-muted); transition: 0.2s; border-bottom: 2px solid transparent; }
@@ -242,13 +243,13 @@
         .game-view.active { display: block; }
         
         .puzzle-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .puzzle-header h3 { font-size: 1rem; font-weight: 600; margin: 0; }
-        .puzzle-header i { cursor: pointer; opacity: 0.7; transition: 0.2s; font-size: 1.1rem; }
+        .puzzle-header h3 { font-size: 1rem; font-weight: 600; }
+        .puzzle-header i { cursor: pointer; opacity: 0.7; transition: 0.2s; }
         .puzzle-header i:hover { opacity: 1; color: var(--accent); transform: rotate(180deg); }
         
-        /* Quebra-Cabeça Dinâmico */
+        /* Quebra-Cabeça Clássico */
         .puzzle-board {
-            display: grid; gap: 4px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
             background: var(--hover-bg); padding: 6px; border-radius: 12px;
             aspect-ratio: 1; border: 1px solid var(--card-border);
         }
@@ -263,7 +264,7 @@
         .puzzle-tile.empty { background: rgba(0,0,0,0.05); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); cursor: default; }
         [data-theme="dark"] .puzzle-tile.empty { background: rgba(0,0,0,0.2); }
 
-        /* Sudoku com Dificuldade e Erros */
+        /* Sudoku */
         .sudoku-board {
             display: grid; grid-template-columns: repeat(9, 1fr); 
             border: 2px solid var(--text-main); aspect-ratio: 1; border-radius: 4px; overflow: hidden;
@@ -281,9 +282,6 @@
         .sudoku-cell:nth-child(9n) { border-right: none; }
         .sudoku-cell:nth-child(n+19):nth-child(-n+27), .sudoku-cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid var(--text-main); }
         .sudoku-cell:nth-child(n+73):nth-child(-n+81) { border-bottom: none; }
-        
-        /* Célula Incorreta no Sudoku */
-        .sudoku-cell.error { color: #ff4d4d; background-color: rgba(255, 77, 77, 0.1); }
 
         /* --- Módulo: Gamesnacks --- */
         .gamesnacks-module { padding: 15px; }
@@ -326,7 +324,7 @@
         .app-icon:hover { transform: scale(1.05); }
         .app-name { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px; }
 
-        /* --- STREAMING_CHUNK:Configurando Modais de Utilitários... --- */
+        /* --- STREAMING_CHUNK:Estilizando Modais... --- */
         /* --- Modais --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
@@ -342,13 +340,6 @@
             width: 100%; padding: 12px; border: 1px solid var(--card-border); border-radius: 8px; 
             margin-bottom: 10px; font-family: inherit; background: var(--hover-bg); color: var(--text-main);
         }
-        
-        /* Correção para o texto das opções nos selects não ficar invisível */
-        select.search-input option {
-            background-color: var(--modal-bg); /* Fundo sólido do modal/card atual */
-            color: var(--text-main); /* Cor do texto padrão do tema */
-        }
-
         .search-results { max-height: 200px; overflow-y: auto; list-style: none; }
         .search-results li { padding: 10px; border-bottom: 1px solid var(--card-border); cursor: pointer; }
         .search-results li:hover { background: var(--hover-bg); }
@@ -410,7 +401,7 @@
             <div class="card greeting">
                 <h2>Olá, Pethra! </h2>
                 <div class="time" id="main-clock" onclick="openTimezoneModal()">00:00:00</div>
-                <!-- Frase Diária Dinâmica -->
+                <!-- ID Adicionado para a frase diária -->
                 <p id="daily-quote">Carregando mensagem especial para hoje...</p>
                 <div id="extra-clocks" style="margin-top:10px; display:flex; gap:10px; font-size:0.8rem; color:var(--text-muted);"></div>
             </div>
@@ -479,7 +470,7 @@
             </div>
         </div>
 
-        <!-- --- STREAMING_CHUNK:Estruturando a Coluna de Jogos (Quebra-cabeça e Sudoku)... --- -->
+        <!-- --- STREAMING_CHUNK:Estruturando a Coluna da Direita (Jogos)... --- -->
         <!-- COLUNA DIREITA: Jogos e Entretenimento -->
         <div class="right-col">
             
@@ -493,16 +484,7 @@
                 <!-- Aba 1: Slide Puzzle -->
                 <div class="game-view active" id="view-puzzle">
                     <div class="puzzle-header">
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <h3>Quebra-Cabeça</h3>
-                            <!-- Seletor de Dificuldade -->
-                            <select id="puzzle-diff" class="search-input" style="padding:4px; margin:0; width:auto; font-size:0.8rem;" onchange="initPuzzle()">
-                                <option value="3">Fácil (3x3)</option>
-                                <option value="4" selected>Médio (4x4)</option>
-                                <option value="5">Difícil (5x5)</option>
-                                <option value="6">Extremo (6x6)</option>
-                            </select>
-                        </div>
+                        <h3>Quebra-Cabeça</h3>
                         <i class="fas fa-random" title="Embaralhar Novo Jogo" onclick="initPuzzle()"></i>
                     </div>
                     <div class="puzzle-board" id="puzzle-board">
@@ -513,16 +495,7 @@
                 <!-- Aba 2: Sudoku -->
                 <div class="game-view" id="view-sudoku">
                     <div class="puzzle-header">
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <h3>Sudoku</h3>
-                            <!-- Seletor de Dificuldade do Sudoku -->
-                            <select id="sudoku-diff" class="search-input" style="padding:4px; margin:0; width:auto; font-size:0.8rem;" onchange="initSudoku()">
-                                <option value="easy" selected>Fácil</option>
-                                <option value="medium">Médio</option>
-                                <option value="hard">Difícil</option>
-                                <option value="extreme">Extremo</option>
-                            </select>
-                        </div>
+                        <h3>Sudoku (Fácil)</h3>
                         <i class="fas fa-random" title="Novo Jogo" onclick="initSudoku()"></i>
                     </div>
                     <div class="sudoku-board" id="sudoku-board">
@@ -642,7 +615,7 @@
         </div>
     </div>
 
-    <!-- --- STREAMING_CHUNK:Inicializando Lógica de Tema e Frase do Dia... --- -->
+    <!-- --- STREAMING_CHUNK:Inicializando Lógica de Tema e Dados... --- -->
     <script>
         // --- TEMA CLARO/ESCURO ---
         function toggleTheme() {
@@ -659,7 +632,7 @@
         document.documentElement.setAttribute('data-theme', savedTheme);
         document.querySelector('#theme-btn i').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
 
-        // --- DADOS E LINKS DA SIDEBAR ---
+        // --- DADOS E LINKS ---
         const getFavicon = (domain) => `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
         
         const linksData = {
@@ -745,9 +718,24 @@
                     ]
                 },
                 {
+                    id: 'roleplay', name: 'RPG',
+                    apps: [
+                        { name: 'World Anvil', url: 'https://worldanvil.com', icon: getFavicon('worldanvil.com') },
+                        { name: 'Netzeroth', url: 'https://nexquestgames.github.io/Netzeroth', icon: 'https://pt.wikipedia.org/wiki/Special:FilePath/Twenty_sided_dice.png' },
+                        { name: 'Linha Crítica', url: 'https://nexquestgames.github.io/linhacriticaFP', icon: 'https://commons.wikimedia.org/wiki/Special:FilePath/D20_icon.png' },
+                        { name: 'Guia Rápido D&D', url: 'https://diogoan.github.io/dnd5e-quickref', icon: 'https://www.enworld.org/attachments/2a4c47e3-ead6-4461-819a-3a42b20ed62a-png.122957/'},
+                        { name: 'Referência D&D AION', url: 'https://pethradev.github.io/aiongameguide', icon: 'https://upload.wikimedia.org/wikipedia/pt/5/50/Dungeons_%26_Dragons_5th_Edition_logo.png'  },
+                        { name: 'Combat Tracker', url: 'https://pw-tf.github.io/taphou5e/monster-tracker.html', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Crossed_swords.svg/960px-Crossed_swords.svg.png' },
+                        { name: 'Lista de Magias D&D', url: 'https://avribacki.gitlab.io/magias5e', icon: 'https://bg3.wiki/w/images/d/d9/Class_Wizard_Badge_Icon.png' },
+                        { name: 'Roll20', url: 'https://roll20.net/', icon: getFavicon('roll20.net') },
+                        { name: 'Livros 5e Download', url: 'https://dnd5ed.github.io', icon: getFavicon('dnd5ed.github.io') }
+                    ]
+                },
+                {
                     id: 'work', name: 'IA e Trabalho',
                     apps: [
                         { name: 'Trello', url: 'https://trello.com', icon: getFavicon('trello.com') },
+                        { name: 'Goblin Tools', url: 'https://goblin.tools', icon: getFavicon('goblin.tools') },
                         { name: 'ChatGPT', url: 'https://chat.openai.com', icon: getFavicon('chatgpt.com') },
                         { name: 'Github', url: 'https://github.com', icon: getFavicon('github.com') },
                         { name: 'Canva', url: 'https://www.canva.com', icon: getFavicon('canva.com') },
@@ -775,9 +763,7 @@
                 }
             ],
             standalone: [
-                { name: 'World Anvil', url: 'https://worldanvil.com', icon: getFavicon('worldanvil.com') },
                 { name: 'Spotify', url: 'https://spotify.com', icon: getFavicon('spotify.com') },
-                { name: 'Netzeroth', url: 'https://nexquestgames.github.io/Netzeroth/', icon: 'https://pt.wikipedia.org/wiki/Special:FilePath/Twenty_sided_dice.png' },
                 { name: 'Moises', url: 'https://moises.ai', icon: getFavicon('moises.ai') },
                 { name: 'Bandlab', url: 'https://bandlab.com', icon: getFavicon('bandlab.com') },
                 { name: 'Mega', url: 'https://mega.nz', icon: getFavicon('mega.nz') },
@@ -785,10 +771,11 @@
             ]
         };
 
+        // --- STREAMING_CHUNK:Configurando Lógica de Frase do Dia e Relógio... ---
         // --- FRASE MOTIVACIONAL DO DIA ---
         const motivationalQuotes = [
-             "\"Carpe Diem. Aproveitem o dia garotos, façam as suas vidas serem extraordinárias.\" — Professor Keating (Sociedade dos Poetas Mortos)",
-            "\"Esta é a história de como um Bolseiro teve uma aventura, e se viu fazendo e dizendo coisas totalmente inesperadas.\" — J.R.R. Tolkien",
+            "\"Carpe Diem. Aproveitem o dia garotos, façam as suas vidas serem extraordinárias.\" — Professor Keating (Sociedade dos Poetas Mortos)",
+            "\"Bilbo nunca esperava que algo extraordinário lhe acontecesse... até que aconteceu. Esteja pronto!\" — Inspirado em J.R.R. Tolkien",
             "\"Torne o dia hoje mais divertido que ontem. Deus te abençoe!\"",
             "\"Tudo o que temos de decidir é o que fazer com o tempo que nos é dado.\" — Gandalf (O Senhor dos Anéis)",
             "\"Existem coisas muito, muito melhores adiante do que qualquer uma que deixamos para trás.\" — C.S. Lewis",
@@ -835,7 +822,7 @@
 
         function setDailyQuote() {
             const today = new Date();
-            // Cria um índice que muda exatamente à meia-noite (muda a cada dia)
+            // Cria um índice previsível baseado na data exata para mudar apenas 1 vez por dia
             const dayIndex = today.getDate() + today.getMonth() + today.getFullYear();
             const quoteIndex = dayIndex % motivationalQuotes.length;
             document.getElementById('daily-quote').innerText = motivationalQuotes[quoteIndex];
@@ -865,7 +852,7 @@
         setInterval(updateClock, 1000); updateClock(); setDailyQuote();
         function removeTimezone(index) { extraTimezones.splice(index, 1); localStorage.setItem('hubExtraTimezones', JSON.stringify(extraTimezones)); updateClock(); }
 
-        // --- STREAMING_CHUNK:Configurando Lógica de Clima e Pomodoro... ---
+        // --- STREAMING_CHUNK:Configurando Módulos de Clima e Pomodoro... ---
         // --- CLIMA ---
         async function fetchWeather(lat, lon, cityName) {
             try {
@@ -978,7 +965,7 @@
         }
         updatePomoDisplay();
 
-        // --- STREAMING_CHUNK:Configurando Anotações e Lógica do Calendário... ---
+        // --- STREAMING_CHUNK:Configurando Funções do Post-it e Calendário... ---
         // --- POST-IT (TEXTO/TAREFAS) ---
         const postitCard = document.getElementById('postit-card');
         const textArea = document.getElementById('postit-text');
@@ -1065,7 +1052,7 @@
         }
         loadCurrentDraft();
 
-        // --- CALENDÁRIO COM COMPROMISSOS, TOOLTIPS E NOTIFICAÇÕES ---
+        // --- CALENDÁRIO COM COMPROMISSOS E NOTIFICAÇÕES ---
         let currentMonth = new Date().getMonth(); let currentYear = new Date().getFullYear();
         let scheduledEvents = JSON.parse(localStorage.getItem('hubCalendarEvents') || '{}');
         let notifiedEvents = JSON.parse(localStorage.getItem('hubNotifiedEvents') || '[]');
@@ -1122,9 +1109,10 @@
                 const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 const hasEvents = scheduledEvents[dateString] && scheduledEvents[dateString].length > 0;
                 
-                // Montar o tooltip com o resumo dos eventos
+                // Montar o tooltip se o dia tiver eventos
                 let tooltipHTML = '';
                 if (hasEvents) {
+                    // Clona e ordena os eventos para mostrar bonito no tooltip
                     const sortedEvents = [...scheduledEvents[dateString]].sort((a, b) => { if (a.allDay && !b.allDay) return -1; if (!a.allDay && b.allDay) return 1; return (a.time || "").localeCompare(b.time || ""); });
                     let eventsList = sortedEvents.map(ev => {
                         const timeLabel = ev.allDay ? 'Dia todo' : ev.time;
@@ -1138,7 +1126,6 @@
         }
         function changeMonth(dir) { currentMonth += dir; if(currentMonth > 11) { currentMonth = 0; currentYear++; } if(currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); }
 
-        // --- STREAMING_CHUNK:Inicializando Lógica Complexa dos Jogos... ---
         // --- LÓGICA DAS ABAS DE JOGOS ---
         function switchGameTab(tabId) {
             document.querySelectorAll('.game-tab').forEach(t => t.classList.remove('active'));
@@ -1147,170 +1134,102 @@
             document.getElementById('view-' + tabId).classList.add('active');
         }
 
-        // --- PUZZLE LOGIC (QUEBRA-CABEÇA DINÂMICO) ---
+        // --- PUZZLE LOGIC (QUEBRA-CABEÇA 15 NÚMEROS) ---
         let puzzleState = [];
-        let puzzleSize = 4;
-
         function initPuzzle() {
-            puzzleSize = parseInt(document.getElementById('puzzle-diff').value);
-            const totalTiles = puzzleSize * puzzleSize;
-            puzzleState = [];
-            for(let i = 1; i < totalTiles; i++) puzzleState.push(i);
-            puzzleState.push(0);
-
-            let emptyIdx = totalTiles - 1;
-            // Embaralhamento que garante que o jogo tem solução
-            for(let i=0; i < (puzzleSize * 50); i++) {
+            puzzleState = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];
+            let emptyIdx = 15;
+            for(let i=0; i<250; i++) {
                 const neighbors = [];
-                const r = Math.floor(emptyIdx / puzzleSize); const c = emptyIdx % puzzleSize;
-                if(r > 0) neighbors.push(emptyIdx - puzzleSize); 
-                if(r < puzzleSize - 1) neighbors.push(emptyIdx + puzzleSize);
-                if(c > 0) neighbors.push(emptyIdx - 1); 
-                if(c < puzzleSize - 1) neighbors.push(emptyIdx + 1);
-                
+                const r = Math.floor(emptyIdx / 4); const c = emptyIdx % 4;
+                if(r > 0) neighbors.push(emptyIdx - 4); if(r < 3) neighbors.push(emptyIdx + 4);
+                if(c > 0) neighbors.push(emptyIdx - 1); if(c < 3) neighbors.push(emptyIdx + 1);
                 const swapIdx = neighbors[Math.floor(Math.random() * neighbors.length)];
                 puzzleState[emptyIdx] = puzzleState[swapIdx]; puzzleState[swapIdx] = 0; emptyIdx = swapIdx;
             }
             renderPuzzleBoard();
         }
         function renderPuzzleBoard() {
-            const board = document.getElementById('puzzle-board'); 
-            board.innerHTML = '';
-            board.style.gridTemplateColumns = `repeat(${puzzleSize}, 1fr)`; // Ajusta a grade dinamicamente
-            
+            const board = document.getElementById('puzzle-board'); board.innerHTML = '';
             puzzleState.forEach((num, index) => {
                 const tile = document.createElement('div');
                 tile.className = 'puzzle-tile' + (num === 0 ? ' empty' : '');
-                
-                // Diminui o tamanho da fonte para grids maiores
-                if (puzzleSize === 5) tile.style.fontSize = '1.1rem';
-                if (puzzleSize === 6) tile.style.fontSize = '0.9rem';
-
                 if (num !== 0) { tile.innerText = num; tile.onclick = () => movePuzzleTile(index); }
                 board.appendChild(tile);
             });
         }
         function movePuzzleTile(index) {
             const emptyIndex = puzzleState.indexOf(0);
-            const row = Math.floor(index / puzzleSize); const col = index % puzzleSize;
-            const emptyRow = Math.floor(emptyIndex / puzzleSize); const emptyCol = emptyIndex % puzzleSize;
+            const row = Math.floor(index / 4); const col = index % 4;
+            const emptyRow = Math.floor(emptyIndex / 4); const emptyCol = emptyIndex % 4;
 
             if ((Math.abs(row - emptyRow) === 1 && col === emptyCol) || (Math.abs(col - emptyCol) === 1 && row === emptyRow)) {
                 puzzleState[emptyIndex] = puzzleState[index]; puzzleState[index] = 0;
                 renderPuzzleBoard();
-                
-                let win = true; 
-                const totalTiles = puzzleSize * puzzleSize;
-                for(let i=0; i < totalTiles - 1; i++) { if(puzzleState[i] !== i+1) win = false; }
+                let win = true; for(let i=0; i<15; i++) { if(puzzleState[i] !== i+1) win = false; }
                 if(win) setTimeout(() => alert("Parabéns! Você resolveu o quebra-cabeça! 🎉"), 100);
             }
         }
 
-        // --- SUDOKU LOGIC E VALIDAÇÃO ---
-        const sudokuPuzzles = {
-            easy: [
-                "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
-                "000000012000035000000600070700000300000400800100000000000120000080000040050000600"
-            ],
-            medium: [
-                "020608000580009700000040000370000500600000004008000013000020000009800036000306090",
-                "000105000140000670080002400063070010900000003010090520007200080026000035000409000"
-            ],
-            hard: [
-                "000600400700003600000091080000000000050180003000306045040200060903000000020000100",
-                "000000000000003085001020000000507000004000100090000000500000073002010000000040009"
-            ],
-            extreme: [
-                "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
-                "002000000000400005000001000000080090060000040010020000000700000600003000000000500" 
-            ]
-        };
-
+        // --- SUDOKU LOGIC ---
+        const sudokuPuzzles = [
+            "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+            "000000012000035000000600070700000300000400800100000000000120000080000040050000600",
+            "100489006730000040000001295007120600500703008006095700914600000020000037800512004"
+        ];
         function initSudoku() {
-            const diff = document.getElementById('sudoku-diff').value;
-            const puzzles = sudokuPuzzles[diff] || sudokuPuzzles.easy;
             const board = document.getElementById('sudoku-board');
             board.innerHTML = '';
-            
-            const puzzleStr = puzzles[Math.floor(Math.random() * puzzles.length)];
+            const puzzleStr = sudokuPuzzles[Math.floor(Math.random() * sudokuPuzzles.length)];
             for(let i=0; i<81; i++) {
                 const val = puzzleStr[i];
                 const input = document.createElement('input');
                 input.type = 'text'; input.maxLength = 1;
                 input.className = 'sudoku-cell' + (val !== '0' ? ' fixed' : '');
-                
                 if (val !== '0') {
                     input.value = val; input.readOnly = true;
                 } else {
                     input.oninput = (e) => {
                         e.target.value = e.target.value.replace(/[^1-9]/g, '');
-                        validateSudoku(); // Verifica se há erros sempre que digitar
                         checkSudokuWin();
                     };
                 }
                 board.appendChild(input);
             }
         }
-
-        function validateSudoku() {
-            const inputs = Array.from(document.querySelectorAll('.sudoku-cell'));
-            const values = inputs.map(i => i.value);
-
-            // Limpar erros antigos
-            inputs.forEach(i => { if(!i.classList.contains('fixed')) i.classList.remove('error'); });
-
-            // Verificar cada célula
-            for(let i=0; i<81; i++) {
-                const val = values[i];
-                if(!val) continue;
-
-                let isError = false;
-                const row = Math.floor(i / 9);
-                const col = i % 9;
-                const boxRow = Math.floor(row / 3) * 3;
-                const boxCol = Math.floor(col / 3) * 3;
-
-                // Checa linha
-                for(let c=0; c<9; c++) { const idx = row * 9 + c; if(idx !== i && values[idx] === val) isError = true; }
-                // Checa coluna
-                for(let r=0; r<9; r++) { const idx = r * 9 + col; if(idx !== i && values[idx] === val) isError = true; }
-                // Checa quadrante 3x3
-                for(let r=0; r<3; r++) {
-                    for(let c=0; c<3; c++) {
-                        const idx = (boxRow + r) * 9 + (boxCol + c);
-                        if(idx !== i && values[idx] === val) isError = true;
-                    }
-                }
-
-                // Aplica a classe de erro na célula digitada errada
-                if(isError && !inputs[i].classList.contains('fixed')) {
-                    inputs[i].classList.add('error');
-                }
-            }
-        }
-
         function checkSudokuWin() {
             const inputs = document.querySelectorAll('.sudoku-cell');
             let isFull = true;
-            let hasError = false;
+            inputs.forEach(i => { if(!i.value) isFull = false; });
             
-            inputs.forEach(i => { 
-                if(!i.value) isFull = false; 
-                if(i.classList.contains('error')) hasError = true;
-            });
-            
-            if(isFull && !hasError) {
-                setTimeout(() => alert("Incrível! Você concluiu o Sudoku! 🎊"), 100);
+            if(isFull) {
+                let isValid = true;
+                let grid = Array.from(inputs).map(i => i.value);
+                // Checa linhas, colunas e os blocos 3x3
+                for(let i=0; i<9; i++) {
+                    let row = new Set(), col = new Set(), box = new Set();
+                    for(let j=0; j<9; j++) {
+                        let rVal = grid[i*9 + j];
+                        let cVal = grid[j*9 + i];
+                        let bVal = grid[Math.floor(i/3)*27 + Math.floor(j/3)*9 + (i%3)*3 + (j%3)];
+                        if(rVal) row.add(rVal);
+                        if(cVal) col.add(cVal);
+                        if(bVal) box.add(bVal);
+                    }
+                    if(row.size !== 9 || col.size !== 9 || box.size !== 9) isValid = false;
+                }
+                if(isValid) setTimeout(() => alert("Incrível! Você concluiu o Sudoku! 🎊"), 100);
             }
         }
 
-        // --- STREAMING_CHUNK:Finalizando Modais de Interface e Listeners... ---
         document.addEventListener('DOMContentLoaded', () => {
             initPuzzle();
             initSudoku();
         });
 
-        // Demais Funções de Modais do Calendário
+
+        // --- STREAMING_CHUNK:Gerenciando Modais Extras e Funcionalidades Globais... ---
+        // Demais Funções de Modais, etc.
         function toggleAllDay() { const isAllDay = document.getElementById('event-allday').checked; const timeInput = document.getElementById('event-time'); timeInput.disabled = isAllDay; timeInput.style.opacity = isAllDay ? '0.5' : '1'; }
         function openDayEventsModal(dateStr) {
             selectedDateForEvent = dateStr; const [year, month, day] = dateStr.split('-');
