@@ -85,7 +85,7 @@
             transition: background 0.3s, border-color 0.3s;
         }
 
-        /* --- STREAMING_CHUNK:Configurando Grid Layout Ampliado... --- */
+        /* */
         /* --- Grid Responsiva com 3 Colunas Ampliadas --- */
         .dashboard-grid {
             display: grid;
@@ -165,7 +165,7 @@
         }
         .task-add::placeholder { color: rgba(0,0,0,0.4); }
 
-        /* --- STREAMING_CHUNK:Configurando Estilos do Calendário e Tooltip... --- */
+        /* */
         /* --- Módulo: Calendário --- */
         .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .calendar-header span { font-weight: 600; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: 0.2s; }
@@ -228,12 +228,14 @@
         .tooltip-event:last-child { margin-bottom: 0; }
         .tooltip-time { font-weight: 600; color: var(--accent); margin-right: 5px; }
 
-        /* --- Módulo: Versículo --- */
-        .verse-module { padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 525px; }
-        .verse-iframe { flex: 1; width: 100%; border: none; }
+        /* --- Módulo: Leitura (Bíblia e Devocional) --- */
+        .reading-module { display: flex; flex-direction: column; height: 525px; padding: 15px; }
+        .reading-view { display: none; flex: 1; flex-direction: column; }
+        .reading-view.active { display: flex; }
+        .reading-iframe { flex: 1; width: 100%; border: none; border-radius: 8px; background: transparent; }
 
-        /* --- STREAMING_CHUNK:Configurando Jogos e Sidebar... --- */
-        /* --- Módulo: Widgets de Jogos (Abas) --- */
+        /* */
+        /* --- Módulo: Widgets de Jogos (Abas Compartilhadas) --- */
         .game-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid var(--card-border); }
         .game-tab { padding-bottom: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 500; color: var(--text-muted); transition: 0.2s; border-bottom: 2px solid transparent; }
         .game-tab:hover { color: var(--text-main); }
@@ -326,7 +328,7 @@
         .app-icon:hover { transform: scale(1.05); }
         .app-name { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px; }
 
-        /* --- STREAMING_CHUNK:Configurando Modais de Utilitários... --- */
+        /* */
         /* --- Modais --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
@@ -392,6 +394,13 @@
         /* Scrollbars */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 10px; }
+
+        /* Prevenir cursor de texto em botões, textos e abas interativas */
+        button, .action-btn, .modal-close, .game-tab, .calendar-day, .calendar-header span, .puzzle-tile, .app-item, .folder, i,
+        .modal h3, .time, .pomodoro-time, .pomodoro-settings, .weather-module, .greeting h2, .greeting p, .hub-title {
+            user-select: none;
+            -webkit-user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -401,7 +410,7 @@
         <i class="fas fa-moon"></i>
     </button>
 
-    <!-- --- STREAMING_CHUNK:Estruturando Corpo HTML Principal... --- -->
+    <!-- -->
     <!-- Dashboard Principal em 3 Colunas -->
     <div class="dashboard-grid">
         
@@ -460,7 +469,7 @@
             </div>
         </div>
 
-        <!-- COLUNA CENTRAL: Calendário e Versículo -->
+        <!-- COLUNA CENTRAL: Calendário e Leitura -->
         <div class="center-col">
             <div class="card calendar-module">
                 <div class="calendar-header">
@@ -473,13 +482,26 @@
                 </div>
             </div>
 
-            <!-- Versículo do Dia -->
-            <div class="card verse-module">
-                <iframe class="verse-iframe" src="https://www.bible.com/pt/verse-of-the-day"></iframe>
+            <!-- Módulo de Leitura (Bíblia e Devocional em Abas) -->
+            <div class="card reading-module">
+                <div class="game-tabs" style="margin-bottom: 10px;">
+                    <div class="game-tab active" id="tab-bible" onclick="switchReadingTab('bible')">Versículo do Dia</div>
+                    <div class="game-tab" id="tab-devotional" onclick="switchReadingTab('devotional')">Wisdom For Today</div>
+                </div>
+
+                <!-- Aba 1: Bíblia -->
+                <div class="reading-view active" id="view-bible">
+                    <iframe class="reading-iframe" src="https://www.bible.com/pt/verse-of-the-day"></iframe>
+                </div>
+
+                <!-- Aba 2: Devocional -->
+                <div class="reading-view" id="view-devotional">
+                    <iframe class="reading-iframe" src="https://www.pastorchuck.org/wisdom-for-today" style="background: #ffffff;"></iframe>
+                </div>
             </div>
         </div>
 
-        <!-- --- STREAMING_CHUNK:Estruturando a Coluna de Jogos (Quebra-cabeça e Sudoku)... --- -->
+        <!-- -->
         <!-- COLUNA DIREITA: Jogos e Entretenimento -->
         <div class="right-col">
             
@@ -558,7 +580,7 @@
         </div>
     </div>
 
-    <!-- --- STREAMING_CHUNK:Renderizando Modais do HTML... --- -->
+    <!-- -->
     <!-- Modais Ocultos (Buscar, Pastas, etc.) -->
     <div class="modal-overlay" id="search-modal">
         <div class="modal">
@@ -642,7 +664,6 @@
         </div>
     </div>
 
-    <!-- --- STREAMING_CHUNK:Inicializando Lógica de Tema e Frase do Dia... --- -->
     <script>
         // --- TEMA CLARO/ESCURO ---
         function toggleTheme() {
@@ -805,7 +826,7 @@
             ]
         };
 
-      // --- STREAMING_CHUNK:Configurando Lógica de Frase do Dia e Relógio... ---
+        /* */
         // --- FRASE MOTIVACIONAL DO DIA ---
         const motivationalQuotes = [
             "\"Carpe Diem. Aproveitem o dia garotos, façam as suas vidas serem extraordinárias.\" — Professor Keating (Sociedade dos Poetas Mortos)",
@@ -886,7 +907,7 @@
         setInterval(updateClock, 1000); updateClock(); setDailyQuote();
         function removeTimezone(index) { extraTimezones.splice(index, 1); localStorage.setItem('hubExtraTimezones', JSON.stringify(extraTimezones)); updateClock(); }
 
-        // --- STREAMING_CHUNK:Configurando Lógica de Clima e Pomodoro... ---
+        /* */
         // --- CLIMA ---
         async function fetchWeather(lat, lon, cityName) {
             try {
@@ -999,7 +1020,7 @@
         }
         updatePomoDisplay();
 
-        // --- STREAMING_CHUNK:Configurando Anotações e Lógica do Calendário... ---
+        /* */
         // --- POST-IT (TEXTO/TAREFAS) ---
         const postitCard = document.getElementById('postit-card');
         const textArea = document.getElementById('postit-text');
@@ -1159,11 +1180,24 @@
         }
         function changeMonth(dir) { currentMonth += dir; if(currentMonth > 11) { currentMonth = 0; currentYear++; } if(currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); }
 
-        // --- STREAMING_CHUNK:Inicializando Lógica Complexa dos Jogos... ---
-        // --- LÓGICA DAS ABAS DE JOGOS ---
+        /* */
+        // --- LÓGICA DAS ABAS DE JOGOS E LEITURA ---
         function switchGameTab(tabId) {
-            document.querySelectorAll('.game-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.game-view').forEach(v => v.classList.remove('active'));
+            document.getElementById('tab-puzzle').classList.remove('active');
+            document.getElementById('tab-sudoku').classList.remove('active');
+            document.getElementById('view-puzzle').classList.remove('active');
+            document.getElementById('view-sudoku').classList.remove('active');
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('view-' + tabId).classList.add('active');
+        }
+
+        function switchReadingTab(tabId) {
+            document.getElementById('tab-bible').classList.remove('active');
+            document.getElementById('tab-devotional').classList.remove('active');
+            document.getElementById('view-bible').classList.remove('active');
+            document.getElementById('view-devotional').classList.remove('active');
+            
             document.getElementById('tab-' + tabId).classList.add('active');
             document.getElementById('view-' + tabId).classList.add('active');
         }
@@ -1325,7 +1359,7 @@
             }
         }
 
-        // --- STREAMING_CHUNK:Finalizando Modais de Interface e Listeners... ---
+        /* */
         document.addEventListener('DOMContentLoaded', () => {
             initPuzzle();
             initSudoku();
@@ -1347,7 +1381,7 @@
                     listDiv.innerHTML += `
                         <div class="event-item">
                             <div class="event-item-info"><span class="event-item-time">${timeLabel}</span><span class="event-item-title">${ev.title}</span></div>
-                            <div class="event-actions"><i class="fas fa-edit" onclick="prepareEditEvent(${ev.id})"></i> <i class="fas fa-trash" onclick="deleteEvent(${ev.id})"></i></div>
+                            <div class="event-actions"><i class="fas fa-edit" onclick="prepareEditEvent('${selectedDateForEvent}', ${ev.id})"></i> <i class="fas fa-trash" onclick="deleteEvent('${selectedDateForEvent}', ${ev.id})"></i></div>
                         </div>`;
                 });
             } else listDiv.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem; text-align:center;">Nenhum compromisso marcado.</p>';
@@ -1368,8 +1402,8 @@
             document.querySelectorAll('.event-notif-cb').forEach(cb => cb.checked = (cb.value === "0"));
             renderDayEventsList(); renderCalendar();
         }
-        function prepareEditEvent(id) {
-            const ev = scheduledEvents[selectedDateForEvent].find(e => e.id === id);
+        function prepareEditEvent(dateStr, id) {
+            const ev = scheduledEvents[dateStr].find(e => e.id === id);
             if (ev) {
                 document.getElementById('event-allday').checked = ev.allDay || false; toggleAllDay();
                 document.getElementById('event-time').value = ev.time || ''; document.getElementById('event-title').value = ev.title;
@@ -1377,13 +1411,15 @@
                 editingEventId = id; document.getElementById('event-save-btn').innerText = 'Atualizar Compromisso';
             }
         }
-        function deleteEvent(id) {
+        function deleteEvent(dateStr, id) {
             if (confirm("Deseja mesmo remover este compromisso?")) {
-                scheduledEvents[selectedDateForEvent] = scheduledEvents[selectedDateForEvent].filter(e => e.id !== id);
-                if (scheduledEvents[selectedDateForEvent].length === 0) delete scheduledEvents[selectedDateForEvent];
-                localStorage.setItem('hubCalendarEvents', JSON.stringify(scheduledEvents));
-                if (editingEventId === id) { document.getElementById('event-time').value = ''; document.getElementById('event-title').value = ''; editingEventId = null; document.getElementById('event-save-btn').innerText = 'Salvar Compromisso'; }
-                renderDayEventsList(); renderCalendar();
+                if (scheduledEvents[dateStr]) {
+                    scheduledEvents[dateStr] = scheduledEvents[dateStr].filter(e => e.id !== id);
+                    if (scheduledEvents[dateStr].length === 0) delete scheduledEvents[dateStr];
+                    localStorage.setItem('hubCalendarEvents', JSON.stringify(scheduledEvents));
+                    if (editingEventId === id) { document.getElementById('event-time').value = ''; document.getElementById('event-title').value = ''; editingEventId = null; document.getElementById('event-save-btn').innerText = 'Salvar Compromisso'; }
+                    renderDayEventsList(); renderCalendar();
+                }
             }
         }
 
@@ -1421,6 +1457,28 @@
             if(id === 'search-modal') { document.getElementById('city-search').value = ''; document.getElementById('search-results').innerHTML = ''; }
             if(id === 'day-events-modal') { editingEventId = null; document.getElementById('event-save-btn').innerText = 'Salvar Compromisso'; document.getElementById('event-time').value = ''; document.getElementById('event-title').value = ''; document.getElementById('event-allday').checked = false; toggleAllDay(); document.querySelectorAll('.event-notif-cb').forEach(cb => cb.checked = (cb.value === "0")); }
         }
+
+        // --- NOVA LÓGICA DE FECHAMENTO DE MODAL ---
+        // Fechar clicando fora (no overlay escuro)
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                closeModal(event.target.id);
+            }
+        });
+
+        // Fechar apertando ESC no teclado
+        window.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal-overlay');
+                modals.forEach(modal => {
+                    // Verifica se o modal não está oculto (se o display for diferente de 'none')
+                    if (window.getComputedStyle(modal).display !== 'none') {
+                        closeModal(modal.id);
+                    }
+                });
+            }
+        });
+
         let searchTimeout;
         async function searchLocation(query) {
             clearTimeout(searchTimeout); if(query.length < 3) return;
